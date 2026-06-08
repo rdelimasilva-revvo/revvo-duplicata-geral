@@ -165,7 +165,7 @@ const AgenteIntermediador = () => {
         {/* Header */}
         <div className="flex items-center justify-between pt-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Agente Intermediador</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Parceiro de Escrituração</h1>
             <p className="text-gray-600 mt-1">
               Análise de duplicatas criadas pelos fornecedores - {currentTime.toLocaleDateString('pt-BR')} às {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </p>

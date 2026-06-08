@@ -38,7 +38,7 @@ const menuItems: MenuItem[] = [
   },
   {
     path: '/revvo/agente-intermediador',
-    label: 'Agente Intermediador',
+    label: 'Parceiro de Escrituração',
     icon: <ChartBar size={18} weight="bold" />
   }
 ];

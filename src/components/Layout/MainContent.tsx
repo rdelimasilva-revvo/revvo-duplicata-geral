@@ -16,6 +16,10 @@ import { ProfilesAccess } from '../Settings';
 import UserProfilePage from '@/pages/UserProfilePage';
 import Notifications from '../Notifications';
 import AgenteIntermediador from '../AgenteIntermediador/AgenteIntermediador';
+import Fornecedores from '../AgenteIntermediador/Fornecedores';
+import DuplicatasGeradas from '../AgenteIntermediador/DuplicatasGeradas';
+import EnvioContratos from '../AgenteIntermediador/EnvioContratos';
+import ControleLiquidacoes from '../ControleLiquidacoes/ControleLiquidacoes';
 import FornecedorDivergente from '../FornecedorDivergente/FornecedorDivergente';
 import { NovosRecebedores } from '../Revvo/pages/NovosRecebedores';
 import {
@@ -53,6 +57,7 @@ const MainContent = ({ currentView, onNavigate }: MainContentProps) => {
         {currentView === ROUTES.HOME && <Home />}
         {(modulesRoutes.find(route => currentView === route.path) ?? modulesRoutes.find(route => currentView.startsWith(route.path + '/')))?.element}
         {currentView === ROUTES.RECEIVABLES_AUTOMATIONS && <AutomaticBookkeeping />}
+        {currentView === ROUTES.RECEIVABLES_LIQUIDATIONS && <ControleLiquidacoes />}
         {currentView === ROUTES.BANKS && <Banks />}
         {currentView === ROUTES.WARRANTIES && <Warranties />}
         {currentView === ROUTES.PAYABLES && <Payables />}
@@ -79,6 +84,9 @@ const MainContent = ({ currentView, onNavigate }: MainContentProps) => {
         {currentView === ROUTES.SUBSCRIPTIONS && <Subscriptions />}
         {currentView === ROUTES.OPT_IN_MANAGEMENT && <OptInManagement />}
         {currentView === ROUTES.AGENTE_INTERMEDIADOR && <AgenteIntermediador />}
+        {currentView === ROUTES.AGENTE_INTERMEDIADOR_FORNECEDORES && <Fornecedores />}
+        {currentView === ROUTES.AGENTE_INTERMEDIADOR_DUPLICATAS && <DuplicatasGeradas />}
+        {currentView === ROUTES.AGENTE_INTERMEDIADOR_CONTRATOS && <EnvioContratos />}
         {currentView === ROUTES.FORNECEDOR_DIVERGENTE && <NovosRecebedores />}
         {currentView === ROUTES.FORNECEDOR_DIVERGENTE_LEGACY && <FornecedorDivergente />}
         {currentView === ROUTES.PAYMENT_REPORT && <PaymentReport />}

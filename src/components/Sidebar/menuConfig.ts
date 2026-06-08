@@ -5,8 +5,7 @@ import {
   ToggleLeft,
   Users,
   Cog,
-  CloudCog,
-  Handshake
+  CloudCog
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 
@@ -18,6 +17,7 @@ export const menuItems = [
     route: ROUTES.RECEIVABLES,
     items: [
       { label: 'Escrituração', route: ROUTES.RECEIVABLES },
+      { label: 'Controle de Liquidações', route: ROUTES.RECEIVABLES_LIQUIDATIONS },
     ],
   },
   {
@@ -28,7 +28,15 @@ export const menuItems = [
       { label: 'Duplicatas Recebidas', route: ROUTES.NOTIFICACOES_DUPLICATAS },
       { label: 'Gestão de Domicílio', route: ROUTES.DOMICILE_MANAGEMENT_NEW },
       { label: 'Novos Recebedores', route: ROUTES.FORNECEDOR_DIVERGENTE_LEGACY },
-      { label: 'Relatório de Pagamentos', route: ROUTES.PAYMENT_REPORT }
+      { label: 'Relatório de Pagamentos', route: ROUTES.PAYMENT_REPORT },
+      {
+        label: 'Gestão de Acordos',
+        route: ROUTES.ACORDOS_COMERCIAIS,
+        items: [
+          { label: 'Empresa', route: ROUTES.ACORDOS_COMERCIAIS },
+          { label: 'Fornecedor', route: ROUTES.ACORDOS_COMERCIAIS_REVISAO_PROPOSTA },
+        ],
+      },
     ],
   },
   {
@@ -38,16 +46,13 @@ export const menuItems = [
   },
   {
     icon: Users,
-    label: 'Agente Intermediador',
+    label: 'Parceiro de Escrituração',
     route: ROUTES.AGENTE_INTERMEDIADOR,
-  },
-  {
-    icon: Handshake,
-    label: 'Gestão de Acordos',
-    route: ROUTES.ACORDOS_COMERCIAIS,
     items: [
-      { label: 'Empresa', route: ROUTES.ACORDOS_COMERCIAIS },
-      { label: 'Fornecedor', route: ROUTES.ACORDOS_COMERCIAIS_REVISAO_PROPOSTA },
+      { label: 'Dashboard', route: ROUTES.AGENTE_INTERMEDIADOR },
+      { label: 'Fornecedores', route: ROUTES.AGENTE_INTERMEDIADOR_FORNECEDORES },
+      { label: 'Duplicatas', route: ROUTES.AGENTE_INTERMEDIADOR_DUPLICATAS },
+      { label: 'Envio de contratos', route: ROUTES.AGENTE_INTERMEDIADOR_CONTRATOS },
     ],
   },
   {

@@ -38,7 +38,7 @@ export const AgenteIntermediador: React.FC = () => {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1F2937]">Agente Intermediador</h1>
+        <h1 className="text-2xl font-bold text-[#1F2937]">Parceiro de Escrituração</h1>
         <p className="text-sm text-gray-500 mt-1">Dashboard analítico de fornecedores e operações</p>
       </div>
 
