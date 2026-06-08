@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-text: #1D2D3E;
+  --secondary-text: #556B82;
+  --highlight-blue: #0070F2;
+}
+
+body {
+  color: var(--primary-text);
+}
+
+@layer components {
+  .btn {
+    @apply h-[32px] rounded-[8px] px-4 text-sm font-medium transition-colors;
+  }
+
+  .btn-primary {
+    @apply bg-[#0070F2] text-white hover:bg-[#0060D2];
+  }
+
+  .input-field {
+    @apply h-[36px] rounded-[6px] border border-[#D3D6DA] px-3 text-sm focus:outline-none focus:border-[#0070F2] focus:ring-1 focus:ring-[#0070F2]/20;
+  }
+
+  .select-field {
+    @apply h-[36px] rounded-[6px] border border-[#D3D6DA] px-3 text-sm focus:outline-none focus:border-[#0070F2] focus:ring-1 focus:ring-[#0070F2]/20 bg-white appearance-none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23556B82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+  }
+
+  .table-row {
+    @apply h-[32px];
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+}
