@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
+// A aplicação não usa mais o Supabase: o cliente exportado aqui é um banco
+// local (memória + localStorage) com a mesma API encadeada. Ver ./localDb.
+import { localDb } from './localDb';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = localDb;
