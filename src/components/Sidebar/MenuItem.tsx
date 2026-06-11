@@ -16,22 +16,24 @@ interface MenuItemProps {
   isActive?: boolean;
   isOpen?: boolean;
   depth?: number;
-  onClick?: () => void;
+  onToggle?: (route: string) => void;
   items?: MenuItemData[];
   onItemClick?: (route: string) => void;
+  isRouteOpen?: (route: string) => boolean;
   activeView?: string;
 }
 
-const MenuItem = ({ 
-  icon: Icon, 
+const MenuItem = ({
+  icon: Icon,
   label,
   route,
-  isActive, 
+  isActive,
   isOpen,
   depth = 0,
-  onClick, 
+  onToggle,
   items,
   onItemClick,
+  isRouteOpen,
   activeView
 }: MenuItemProps) => {
   const hasSubmenu = items && items.length > 0;
@@ -52,7 +54,7 @@ const MenuItem = ({
   const fontSize = isMainMenuItem ? 'text-[13px]' : 'text-[12px]';
   const handleClick = () => {
     if (hasSubmenu) {
-      onClick?.();
+      onToggle?.(route);
     } else {
       // Use the route from props
       onItemClick?.(route);
@@ -96,11 +98,12 @@ const MenuItem = ({
               label={item.label}
               route={item.route}
               isActive={isItemActive(item)}
-              isOpen={isOpen}
+              isOpen={isRouteOpen ? isRouteOpen(item.route) : false}
               depth={depth + 1}
-              onClick={() => item.items ? onClick?.() : onItemClick?.(item.route)}
+              onToggle={onToggle}
               items={item.items}
               onItemClick={onItemClick}
+              isRouteOpen={isRouteOpen}
               activeView={activeView}
             />
           ))}

@@ -29,28 +29,39 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activeView }) => {
     }
   }, [activeView]);
 
-  const handleMenuClick = (route: string, hasSubmenu?: boolean) => {
-    if (hasSubmenu) {
-      setOpenMenus(prev => {
-        const newOpenMenus = new Set<string>();
-        
-        // If menu is already open, close it and its children
-        if (prev.has(route)) {
-          // Close everything by returning empty set
-          return newOpenMenus;
-        } else {
-          // Open the menu and ensure parent menus are open
-          const allMenuItems = [...menuItems, ...footerMenuItems];
-          const parentRoutes = findAllParentRoutes(allMenuItems, route);
-          parentRoutes.forEach(r => newOpenMenus.add(r));
-          newOpenMenus.add(route);
-        }
-        return newOpenMenus;
-      });
-    } else {
-      // Use the route directly from the menu configuration
-      onMenuClick(route);
+  const collectDescendantRoutes = (items: any[], targetRoute: string): string[] => {
+    const collect = (item: any): string[] => [
+      item.route,
+      ...(item.items ? item.items.flatMap(collect) : []),
+    ];
+    for (const item of items) {
+      if (item.route === targetRoute) return collect(item);
+      if (item.items) {
+        const found = collectDescendantRoutes(item.items, targetRoute);
+        if (found.length) return found;
+      }
     }
+    return [];
+  };
+
+  const handleToggle = (route: string) => {
+    setOpenMenus(prev => {
+      const allMenuItems = [...menuItems, ...footerMenuItems];
+
+      // If menu is already open, close only it and its descendants
+      if (prev.has(route)) {
+        const next = new Set(prev);
+        const toClose = collectDescendantRoutes(allMenuItems, route);
+        (toClose.length ? toClose : [route]).forEach(r => next.delete(r));
+        return next;
+      }
+
+      // Open the menu and ensure parent menus are open
+      const next = new Set<string>();
+      findAllParentRoutes(allMenuItems, route).forEach(r => next.add(r));
+      next.add(route);
+      return next;
+    });
   };
 
   const isMenuOpen = (route: string) => openMenus.has(route);
@@ -74,32 +85,34 @@ const Sidebar: React.FC<SidebarProps> = ({ onMenuClick, activeView }) => {
         </div>
         <div className="flex-1">
           {menuItems.map((item) => (
-            <MenuItem 
+            <MenuItem
               key={item.route}
-              icon={item.icon} 
-              label={item.label} 
+              icon={item.icon}
+              label={item.label}
               route={item.route}
               isActive={isMenuActive(item)}
               isOpen={isMenuOpen(item.route)}
-              onClick={() => handleMenuClick(item.route, !!item.items)}
+              onToggle={handleToggle}
               items={item.items}
               onItemClick={onMenuClick}
+              isRouteOpen={isMenuOpen}
               activeView={activeView}
             />
           ))}
         </div>
         <div className="border-t border-[#e5e5e5] pt-2">
           {footerMenuItems.map((item) => (
-            <MenuItem 
+            <MenuItem
               key={item.route}
-              icon={item.icon} 
-              label={item.label} 
+              icon={item.icon}
+              label={item.label}
               route={item.route}
               isActive={isMenuActive(item)}
               isOpen={isMenuOpen(item.route)}
-              onClick={() => handleMenuClick(item.route, !!item.items)}
+              onToggle={handleToggle}
               items={item.items}
               onItemClick={onMenuClick}
+              isRouteOpen={isMenuOpen}
               activeView={activeView}
             />
           ))}
