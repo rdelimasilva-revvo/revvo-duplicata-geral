@@ -259,7 +259,7 @@ export default function NewRule({ basePath = '/app/automacoes' }) {
         value_end: rule.value_end !== null && !isNaN(rule.value_end) ? Number(rule.value_end.toFixed(2)) : null,
         days_since_creation: rule.days_since_creation ? Number(rule.days_since_creation) : null,
         active: Boolean(rule.active),
-        company_id: Number(companyId),
+        company_id: companyId,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         output_channel_id: rule.output_channel_id,
