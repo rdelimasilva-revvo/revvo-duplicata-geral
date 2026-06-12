@@ -5,7 +5,8 @@ import { supabase } from '../../lib/supabase';
 import { useCompany } from '../../context/CompanyContext';
 import { useConfig } from '../../context/ConfigContext';
 import { storeCompanyId } from '../../utils/storage';
-import { translateSupabaseError } from '../../utils/errorTranslation';
+import { getErrorDetails } from '../../utils/errorTranslation';
+import { ErrorMessage } from '../common/ErrorMessage';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -103,12 +104,14 @@ const Login = () => {
         throw dbError;
       }
     } catch (error) {
-      setError(translateSupabaseError(error instanceof Error ? error.message : 'Erro ao fazer login'));
+      setError(error instanceof Error ? error.message : 'Erro ao fazer login');
       console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const errorDetails = error ? getErrorDetails(error) : null;
 
   return (
     <div className="flex min-h-screen">
@@ -224,15 +227,22 @@ const Login = () => {
               </button>
             </div>
 
+            {errorDetails && (
+              <ErrorMessage
+                type="generic"
+                title={errorDetails.title}
+                message={errorDetails.message}
+                suggestion={errorDetails.suggestion}
+              />
+            )}
+
             <button
               type="submit"
-              className="w-full h-input bg-revvo-dark-blue text-white rounded-md hover:bg-opacity-90 transition-colors text-base font-onest font-semibold"
+              disabled={isLoading}
+              className="w-full h-input bg-revvo-dark-blue text-white rounded-md hover:bg-opacity-90 transition-colors text-base font-onest font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Entrar
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </button>
-            {error && (
-              <p className="mt-2 text-error text-sm">{error}</p>
-            )}
           </form>
 
           <div className="mt-6 text-center">

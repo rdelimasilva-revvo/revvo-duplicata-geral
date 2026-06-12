@@ -27,6 +27,16 @@ export interface Database {
           output_channel_id: number | null
           bank_id: number[] | null
           partner_type: number | null
+          issue_date_mode: 'range' | 'relative' | null
+          issue_date_ini: string | null
+          issue_date_end: string | null
+          issue_date_rel_days: number | null
+          due_date_mode: 'range' | 'relative' | null
+          due_date_ini: string | null
+          due_date_end: string | null
+          due_date_rel_days: number | null
+          value_divergence_pct: number | null
+          value_divergence_abs: number | null
         }
         Insert: {
           id?: number
@@ -53,6 +63,16 @@ export interface Database {
           output_channel_id?: number | null
           bank_id?: number[] | null
           partner_type?: number | null
+          issue_date_mode?: 'range' | 'relative' | null
+          issue_date_ini?: string | null
+          issue_date_end?: string | null
+          issue_date_rel_days?: number | null
+          due_date_mode?: 'range' | 'relative' | null
+          due_date_ini?: string | null
+          due_date_end?: string | null
+          due_date_rel_days?: number | null
+          value_divergence_pct?: number | null
+          value_divergence_abs?: number | null
         }
         Update: {
           id?: number
@@ -79,6 +99,16 @@ export interface Database {
           output_channel_id?: number | null
           bank_id?: number[] | null
           partner_type?: number | null
+          issue_date_mode?: 'range' | 'relative' | null
+          issue_date_ini?: string | null
+          issue_date_end?: string | null
+          issue_date_rel_days?: number | null
+          due_date_mode?: 'range' | 'relative' | null
+          due_date_ini?: string | null
+          due_date_end?: string | null
+          due_date_rel_days?: number | null
+          value_divergence_pct?: number | null
+          value_divergence_abs?: number | null
         }
       }
       customer: {
@@ -86,6 +116,7 @@ export interface Database {
           id: string
           company_id: number
           name: string | null
+          doc_num: string | null
           created_at: string
         }
       }
@@ -162,7 +193,7 @@ export interface Database {
         company_id: number | null
         created_at: string
         name: string | null
-        company_id: number | null
+        doc_num: string | null
       }
     }
   }

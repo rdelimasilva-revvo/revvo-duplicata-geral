@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { DotsThree, Eye, CheckCircle, XCircle } from '@phosphor-icons/react';
+import { MoreHorizontal, Eye, CheckCircle2, XCircle } from 'lucide-react';
 
 interface ActionsMenuProps {
   onViewDetails: () => void;
@@ -42,7 +42,7 @@ export function ActionsMenu({ onViewDetails, onApprove, onReject }: ActionsMenuP
         className="p-1 hover:bg-gray-100 rounded-md transition-colors"
         aria-label="Menu de ações"
       >
-        <DotsThree className="w-5 h-5 text-gray-600" weight="bold" />
+        <MoreHorizontal className="w-5 h-5 text-gray-600" />
       </button>
 
       {isOpen && (
@@ -64,7 +64,7 @@ export function ActionsMenu({ onViewDetails, onApprove, onReject }: ActionsMenuP
             }}
             className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-green-600"
           >
-            <CheckCircle className="w-4 h-4" />
+            <CheckCircle2 className="w-4 h-4" />
             Aprovar
           </button>
           <button

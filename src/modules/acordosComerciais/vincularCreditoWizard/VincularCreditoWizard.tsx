@@ -1,14 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Scales,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle,
-  WarningCircle,
-  CircleNotch,
-  PaperPlaneTilt,
-  X,
-} from '@phosphor-icons/react';
+import { Scale, ArrowLeft, ArrowRight, CheckCircle2, AlertCircle, Loader2, Send, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import {
@@ -214,7 +205,7 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
     return (
       <WizardShell>
         <div className="flex-1 flex flex-col items-center justify-center gap-3 py-16">
-          <CircleNotch size={28} className="animate-spin text-[#0070f2]" />
+          <Loader2 size={28} className="animate-spin text-[#0070f2]" />
           <p className="text-sm text-gray-500">Carregando créditos e notas…</p>
         </div>
       </WizardShell>
@@ -227,7 +218,7 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
         <HeaderTopRow>
           <HeaderTitleGroup>
             <HeaderIconBadge>
-              <Scales size={20} className="text-white" weight="fill" />
+              <Scale size={20} className="text-white" />
             </HeaderIconBadge>
             <div>
               <HeaderTitle>Selecionar NFs e Vincular Crédito</HeaderTitle>
@@ -244,7 +235,7 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
             title="Fechar"
             className="w-8 h-8 rounded-lg bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <X size={16} weight="bold" />
+            <X size={16} />
           </button>
         </HeaderTopRow>
         <Stepper currentIndex={currentStepIndex} onJumpTo={goToStep} />
@@ -253,7 +244,7 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
       <WizardBody>
         {error && (
           <div className="flex items-center gap-2 p-3 mb-4 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-700">
-            <WarningCircle size={14} weight="fill" />
+            <AlertCircle size={14} />
             {error}
           </div>
         )}
@@ -269,18 +260,18 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
             {validation.ok ? (
               computed.hasResidual && !computed.balanced ? (
                 <>
-                  <CheckCircle size={14} weight="fill" className="text-amber-500" />
+                  <CheckCircle2 size={14} className="text-amber-500" />
                   Pronto — saldo de {formatCurrency(computed.residual)} será preservado
                 </>
               ) : (
                 <>
-                  <CheckCircle size={14} weight="fill" className="text-emerald-500" />
+                  <CheckCircle2 size={14} className="text-emerald-500" />
                   Pronto para avançar
                 </>
               )
             ) : (
               <>
-                <WarningCircle size={14} weight="fill" className="text-amber-500" />
+                <AlertCircle size={14} className="text-amber-500" />
                 {validation.reason}
               </>
             )}
@@ -304,12 +295,12 @@ export function VincularCreditoWizard({ onBack, onSubmit }: VincularCreditoWizar
               >
                 {submitting ? (
                   <>
-                    <CircleNotch size={14} className="animate-spin" />
+                    <Loader2 size={14} className="animate-spin" />
                     Gravando…
                   </>
                 ) : (
                   <>
-                    <PaperPlaneTilt size={14} weight="fill" />
+                    <Send size={14} />
                     Confirmar vinculação
                   </>
                 )}

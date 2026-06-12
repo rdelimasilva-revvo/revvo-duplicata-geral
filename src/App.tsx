@@ -5,6 +5,7 @@ import Login from './components/Auth/Login';
 import SignUp from './components/Auth/SignUp';
 import Onboarding from './components/Onboarding/Onboarding';
 import { CompanyProvider, useCompany } from './context/CompanyContext';
+import { SacadorProvider } from './context/SacadorContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { DebugProvider } from './context/DebugContext';
 import { ToastProvider } from './context/ToastContext';
@@ -114,15 +115,17 @@ const AppRoutes: React.FC = () => {
 function App() {
   return (
     <CompanyProvider>
-      <DebugProvider>
-        <ConfigProvider>
-          <ToastProvider>
-            <Router>
-              <AppRoutes />
-            </Router>
-          </ToastProvider>
-        </ConfigProvider>
-      </DebugProvider>
+      <SacadorProvider>
+        <DebugProvider>
+          <ConfigProvider>
+            <ToastProvider>
+              <Router>
+                <AppRoutes />
+              </Router>
+            </ToastProvider>
+          </ConfigProvider>
+        </DebugProvider>
+      </SacadorProvider>
     </CompanyProvider>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FolderLock, Loader2 } from 'lucide-react';
-import { DownloadSimple, FilePdf, FileXls } from '@phosphor-icons/react';
+import { FolderLock, Loader2, Download, FileText, FileSpreadsheet } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import { formatDate } from '../utils';
@@ -103,7 +102,7 @@ export function DocumentsCard({ proposalCode, title = 'Documentos', limit = 4 }:
       ) : (
         <ul className="divide-y divide-gray-100">
           {docs.map((doc) => {
-            const Icon = doc.kind === 'nf' ? FileXls : FilePdf;
+            const Icon = doc.kind === 'nf' ? FileSpreadsheet : FileText;
             const iconCls =
               doc.kind === 'nf'
                 ? 'text-emerald-600 bg-emerald-50'
@@ -111,7 +110,7 @@ export function DocumentsCard({ proposalCode, title = 'Documentos', limit = 4 }:
             return (
               <li key={doc.id} className="flex items-center gap-3 px-4 py-2.5">
                 <div className={`w-7 h-7 rounded-md flex items-center justify-center ${iconCls}`}>
-                  <Icon size={14} weight="fill" />
+                  <Icon size={14} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-semibold text-gray-800 truncate">{doc.name}</p>
@@ -125,7 +124,7 @@ export function DocumentsCard({ proposalCode, title = 'Documentos', limit = 4 }:
                   aria-label={`Baixar ${doc.name}`}
                   className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md bg-white border border-gray-200 text-gray-700 text-[11px] font-semibold hover:border-[#0070f2] hover:text-[#0070f2] hover:bg-blue-50 transition-colors"
                 >
-                  <DownloadSimple size={12} weight="bold" />
+                  <Download size={12} />
                   Baixar
                 </button>
               </li>

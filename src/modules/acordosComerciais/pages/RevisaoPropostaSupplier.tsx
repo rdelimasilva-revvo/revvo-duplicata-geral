@@ -1,29 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  X as XIcon,
-  MagnifyingGlass,
-  CheckCircle,
-  CurrencyCircleDollar,
-  Ticket,
-  Buildings,
-  CalendarBlank,
-  FileText,
-  ChatCircleText,
-  Receipt,
-  ArrowsClockwise,
-  ArrowsLeftRight,
-  FilePdf,
-  FileXls,
-  FileArchive,
-  ClockCounterClockwise,
-  DownloadSimple,
-  X as XCloseIcon,
-  Warning,
-  CaretDown,
-  CaretRight,
-  XCircle,
-  Tag,
-} from '@phosphor-icons/react';
+import { X as XIcon, Search, CheckCircle2, CircleDollarSign, Ticket, Building2, Calendar, FileText, MessageSquareText, Receipt, RefreshCw, ArrowLeftRight, FileSpreadsheet, FileArchive, History, Download, X as XCloseIcon, AlertTriangle, ChevronDown, ChevronRight, XCircle, Tag } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 
@@ -120,7 +96,7 @@ const DOC_GROUPS: AgreementDocGroup[] = [
   {
     id: 'contracts',
     label: 'Contratos e Acordos',
-    icon: FilePdf,
+    icon: FileText,
     accent: 'text-rose-600 bg-rose-50',
     items: [
       { id: 'c1', name: 'Acordo Comercial - PRP-2026-0501.pdf', sizeLabel: '482 KB', updatedAt: '2026-05-02' },
@@ -130,7 +106,7 @@ const DOC_GROUPS: AgreementDocGroup[] = [
   {
     id: 'sheets',
     label: 'Planilhas e Extratos',
-    icon: FileXls,
+    icon: FileSpreadsheet,
     accent: 'text-emerald-600 bg-emerald-50',
     items: [
       { id: 's1', name: 'Extrato-Creditos-Q2.xlsx', sizeLabel: '98 KB', updatedAt: '2026-05-01' },
@@ -140,7 +116,7 @@ const DOC_GROUPS: AgreementDocGroup[] = [
   {
     id: 'logs',
     label: 'Logs e Auditoria',
-    icon: ClockCounterClockwise,
+    icon: History,
     accent: 'text-sky-600 bg-sky-50',
     items: [
       { id: 'l1', name: 'Log de aceite eletronico.txt', sizeLabel: '12 KB', updatedAt: '2026-05-03' },
@@ -287,7 +263,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               className="w-8 h-8 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 flex items-center justify-center"
               aria-label="Fechar"
             >
-              <XCloseIcon size={16} weight="bold" />
+              <XCloseIcon size={16} />
             </button>
           )}
           <div className="flex flex-col justify-center">
@@ -304,12 +280,12 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               onClick={onOpenSync}
               className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-100 transition-colors"
             >
-              <ArrowsLeftRight size={14} weight="bold" />
+              <ArrowLeftRight size={14} />
               NFs e Pagamentos
             </button>
           )}
           <span className="flex items-center gap-2 text-xs text-gray-500">
-            <CalendarBlank size={14} weight="bold" />
+            <Calendar size={14} />
             {new Date().toLocaleDateString('pt-BR')}
           </span>
         </div>
@@ -320,7 +296,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1.5">
-                <Buildings size={14} weight="duotone" className="text-gray-400" />
+                <Building2 size={14} className="text-gray-400" />
                 <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">
                   Fornecedor
                 </p>
@@ -337,7 +313,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
 
             <div className="min-w-0 lg:border-l lg:border-gray-100 lg:pl-8">
               <div className="flex items-center gap-2 mb-1.5">
-                <CalendarBlank size={14} weight="duotone" className="text-gray-400" />
+                <Calendar size={14} className="text-gray-400" />
                 <label className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">
                   Período
                 </label>
@@ -354,9 +330,8 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                     </option>
                   ))}
                 </select>
-                <ArrowsClockwise
+                <RefreshCw
                   size={14}
-                  weight="bold"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                 />
               </div>
@@ -367,7 +342,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
 
             <div className="min-w-0 lg:border-l lg:border-gray-100 lg:pl-8">
               <div className="flex items-center gap-2 mb-1.5">
-                <ChatCircleText size={14} weight="duotone" className="text-[#0A6ED1]" />
+                <MessageSquareText size={14} className="text-[#0A6ED1]" />
                 <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">
                   Justificativa
                 </p>
@@ -384,7 +359,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           <PerformanceCard icon={Receipt} label="NF Emitidas" value={String(totalIssued)} caption="No período selecionado" />
           <PerformanceCard
-            icon={CheckCircle}
+            icon={CheckCircle2}
             label="NF Pagas"
             value={String(totalPaid)}
             caption={`${totalIssued ? Math.round((totalPaid / totalIssued) * 100) : 0}% do total`}
@@ -458,7 +433,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                               className="w-6 h-6 rounded-md flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100"
                               aria-label={isOpen ? 'Recolher' : 'Expandir'}
                             >
-                              {isOpen ? <CaretDown size={12} weight="bold" /> : <CaretRight size={12} weight="bold" />}
+                              {isOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                             </button>
                           ) : null}
                         </td>
@@ -468,7 +443,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                         </td>
                         <td className="px-4 py-4 align-middle">
                           <div className="flex items-start gap-2 min-w-0">
-                            <Buildings size={14} weight="duotone" className="text-gray-400 shrink-0 mt-0.5" />
+                            <Building2 size={14} className="text-gray-400 shrink-0 mt-0.5" />
                             <div className="min-w-0">
                               <span className="block text-[13px] font-semibold text-gray-900 truncate">
                                 {inv.origin}
@@ -510,7 +485,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                             disabled={isPaid || balance === 0}
                             className="inline-flex items-center gap-1.5 px-3 h-8 text-xs font-semibold text-[#0A6ED1] bg-[#E8F2FD] hover:bg-[#D6E7FA] rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                           >
-                            <Ticket size={13} weight="bold" />
+                            <Ticket size={13} />
                             Vincular
                           </button>
                         </td>
@@ -527,7 +502,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                                 <div className="flex items-center justify-between gap-3 text-xs">
                                   <span className="inline-flex items-center gap-2 text-gray-700">
                                     <span className="w-5 h-5 rounded bg-amber-50 text-amber-700 flex items-center justify-center">
-                                      <Tag size={11} weight="fill" />
+                                      <Tag size={11} />
                                     </span>
                                     Desconto comercial
                                   </span>
@@ -542,7 +517,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                                   <div key={a.creditId} className="flex items-center justify-between gap-3 text-xs">
                                     <span className="inline-flex items-center gap-2 text-gray-700">
                                       <span className="w-5 h-5 rounded bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                                        <CurrencyCircleDollar size={11} weight="fill" />
+                                        <CircleDollarSign size={11} />
                                       </span>
                                       {credit?.label ?? a.creditId}
                                       <span className="text-gray-400">· {credit?.origin ?? '—'}</span>
@@ -578,7 +553,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               onClick={handleDownloadAll}
               className="inline-flex items-center gap-2 px-4 h-9 text-xs font-semibold text-white bg-[#0A6ED1] hover:bg-[#0855A8] rounded-md transition-colors"
             >
-              <FileArchive size={14} weight="fill" />
+              <FileArchive size={14} />
               Baixar Tudo
             </button>
           </div>
@@ -589,7 +564,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                 <div key={group.id} className="p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${group.accent}`}>
-                      <Icon size={15} weight="fill" />
+                      <Icon size={15} />
                     </div>
                     <div>
                       <p className="text-[13px] font-semibold text-gray-900">{group.label}</p>
@@ -610,7 +585,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
                           aria-label={`Baixar ${item.name}`}
                           className="w-7 h-7 rounded-md flex-shrink-0 flex items-center justify-center text-gray-400 hover:text-[#0A6ED1] hover:bg-[#E8F2FD] opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <DownloadSimple size={14} weight="bold" />
+                          <Download size={14} />
                         </button>
                       </li>
                     ))}
@@ -627,11 +602,11 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
           <div className="text-xs text-gray-500 hidden md:flex items-center gap-2">
             {decision === 'approve' ? (
               <span className="inline-flex items-center gap-1.5 text-emerald-700 font-medium">
-                <CheckCircle size={14} weight="fill" /> Acordo aprovado — assinatura em andamento.
+                <CheckCircle2 size={14} /> Acordo aprovado — assinatura em andamento.
               </span>
             ) : decision === 'reject' ? (
               <span className="inline-flex items-center gap-1.5 text-rose-700 font-medium">
-                <XCircle size={14} weight="fill" /> Acordo recusado e devolvido ao comprador.
+                <XCircle size={14} /> Acordo recusado e devolvido ao comprador.
               </span>
             ) : (
               <span>Revise os abatimentos antes de decidir. Ação visível para comprador e fornecedor.</span>
@@ -643,7 +618,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               onClick={handleSummary}
               className="inline-flex items-center gap-2 h-10 px-4 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <DownloadSimple size={15} weight="bold" />
+              <Download size={15} />
               Baixar Resumo
             </button>
             <button
@@ -652,7 +627,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               disabled={decision !== null}
               className="inline-flex items-center gap-2 h-10 px-4 text-sm font-semibold text-rose-700 border border-rose-300 hover:bg-rose-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <XCircle size={15} weight="bold" />
+              <XCircle size={15} />
               Recusar
             </button>
             <button
@@ -661,7 +636,7 @@ export function RevisaoPropostaSupplier({ proposalCode, onBack, onOpenSync }: Re
               disabled={decision !== null}
               className="inline-flex items-center gap-2 h-10 px-5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <CheckCircle size={15} weight="fill" />
+              <CheckCircle2 size={15} />
               Aprovar Acordo
             </button>
           </div>
@@ -705,7 +680,7 @@ function PerformanceCard({ icon: Icon, label, value, caption, tone = 'default' }
     <div className={`border rounded-lg shadow-sm p-5 ${toneClasses}`}>
       <div className="flex items-center gap-2 mb-2">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
-          <Icon size={16} weight="fill" />
+          <Icon size={16} />
         </div>
         <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">{label}</p>
       </div>
@@ -785,7 +760,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-8 h-8 rounded-lg bg-[#E8F2FD] text-[#0A6ED1] flex items-center justify-center">
-                <Ticket size={18} weight="duotone" />
+                <Ticket size={18} />
               </div>
               <h3 className="text-base font-semibold text-gray-900">Vincular Crédito</h3>
             </div>
@@ -803,13 +778,13 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
             aria-label="Fechar"
             className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 flex items-center justify-center"
           >
-            <XIcon size={18} weight="bold" />
+            <XIcon size={18} />
           </button>
         </header>
 
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="relative">
-            <MagnifyingGlass size={16} weight="bold" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               value={search}
@@ -819,7 +794,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
             />
           </div>
           <p className="mt-2 text-[11px] text-gray-500 flex items-start gap-1.5">
-            <Warning size={12} weight="fill" className="text-amber-500 flex-shrink-0 mt-[1px]" />
+            <AlertTriangle size={12} className="text-amber-500 flex-shrink-0 mt-[1px]" />
             Regra do acordo: o crédito só pode ser vinculado se liquidar a NF por inteiro. Valores picados entre múltiplas notas não são permitidos.
           </p>
         </div>
@@ -858,7 +833,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
                         isSelected ? 'bg-[#0A6ED1] text-white' : 'bg-emerald-50 text-emerald-600'
                       }`}
                     >
-                      <CurrencyCircleDollar size={16} weight="fill" />
+                      <CircleDollarSign size={16} />
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-gray-900 truncate">{c.label}</div>
@@ -906,7 +881,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
                 disabled={submitting || !canLiquidate}
                 className="h-11 px-5 inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#0A6ED1] hover:bg-[#0855A8] rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex-shrink-0"
               >
-                <CheckCircle size={16} weight="fill" />
+                <CheckCircle2 size={16} />
                 Liquidar NF
               </button>
             </div>

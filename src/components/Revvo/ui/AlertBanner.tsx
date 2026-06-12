@@ -1,5 +1,5 @@
 import React from 'react';
-import { Warning } from '@phosphor-icons/react';
+import { AlertTriangle } from 'lucide-react';
 
 interface AlertBannerProps {
   message: string;
@@ -21,7 +21,7 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({ message, variant = 'wa
 
   return (
     <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 ${variants[variant]} mb-6`}>
-      <Warning size={20} weight="fill" className={iconColors[variant]} />
+      <AlertTriangle size={20} className={iconColors[variant]} />
       <p className="text-sm font-medium">{message}</p>
     </div>
   );

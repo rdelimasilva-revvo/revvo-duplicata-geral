@@ -1,5 +1,5 @@
 import { TableCheckbox } from '@/modules/notificacaoDuplicata/components/ui/TableCheckbox';
-import { CaretUp, CaretDown } from '@phosphor-icons/react';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 
 export type SortField = 'issueDate' | 'numeroNota' | 'sacador' | 'sacado' | 'amount' | 'statusManifestacao' | 'diasParaManifestacao';
 export type SortOrder = 'asc' | 'desc';
@@ -15,12 +15,12 @@ interface BillsTableHeaderProps {
 export function BillsTableHeader({ allSelected, onToggleAll, sortField, sortOrder, onSort }: BillsTableHeaderProps) {
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) {
-      return <CaretUp size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />;
+      return <ChevronUp size={14} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />;
     }
     return sortOrder === 'asc' ? (
-      <CaretUp size={14} className="text-blue-600" />
+      <ChevronUp size={14} className="text-blue-600" />
     ) : (
-      <CaretDown size={14} className="text-blue-600" />
+      <ChevronDown size={14} className="text-blue-600" />
     );
   };
 

@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+import { inicioRecebiveisRoutes } from '@/modules/inicioRecebiveis/routes';
+import { notasFiscaisRoutes } from '@/modules/notasFiscais/routes';
 import { escrituracaoDuplicataRoutes } from '@/modules/escrituracaoDuplicata/routes';
 import { notificacaoDuplicataRoutes } from '@/modules/notificacaoDuplicata/routes';
 import { gestorDomicilioRoutes } from '@/modules/gestorDomicilio/routes';
@@ -11,6 +13,8 @@ export interface ModuleRoute {
 }
 
 export const modulesRoutes: ModuleRoute[] = [
+  ...inicioRecebiveisRoutes,
+  ...notasFiscaisRoutes,
   ...escrituracaoDuplicataRoutes,
   ...notificacaoDuplicataRoutes,
   ...gestorDomicilioRoutes,

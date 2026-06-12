@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  FileText, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
+import {
+  FileText,
+  TrendingUp,
+  DollarSign,
   CheckCircle, 
   XCircle, 
   Clock, 
@@ -68,8 +67,42 @@ const payablesData = {
   ]
 };
 
-const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'blue' }) => {
-  const iconColorClasses = {
+// Os dados acima são mock locais (hardcoded). Enquanto esta for a fonte,
+// o aviso de demonstração permanece visível ao usuário.
+const isMockData = true;
+
+// Limiares para destacar métricas que exigem ação (visibilidade do status do sistema)
+const ALERT_THRESHOLDS = {
+  errorRate: 2, // % de erro na troca de arquivos
+  failedAutomations: 100, // automações com falha
+  pendingProcessing: 50, // duplicatas aguardando processamento
+  queueSize: 100 // itens na fila de processamento
+};
+
+const STORAGE_KEY_ACTIVE_TAB = 'home-dashboard-active-tab';
+
+type HomeTab = 'recebiveis' | 'contasAPagar';
+
+const HOME_TABS: { id: HomeTab; label: string }[] = [
+  { id: 'recebiveis', label: 'Recebíveis' },
+  { id: 'contasAPagar', label: 'Contas a Pagar' }
+];
+
+type StatCardColor = 'blue' | 'green' | 'red' | 'yellow' | 'purple';
+
+interface StatCardProps {
+  title: string;
+  value: string;
+  subtitle?: string;
+  icon: React.ComponentType<{ className?: string }>;
+  trend?: 'up' | 'down';
+  trendValue?: string;
+  color?: StatCardColor;
+  alert?: boolean;
+}
+
+const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'blue', alert = false }: StatCardProps) => {
+  const iconColorClasses: Record<StatCardColor, string> = {
     blue: 'text-blue-600',
     green: 'text-green-600',
     red: 'text-red-600',
@@ -78,10 +111,15 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color
   };
 
   return (
-    <div className="p-6 rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className={`p-6 rounded-lg border shadow-sm ${alert ? 'border-red-200 bg-red-50 ring-2 ring-red-300' : 'border-gray-200 bg-white'}`}>
       <div className="flex items-center justify-between mb-4">
-        <Icon className={`w-8 h-8 ${iconColorClasses[color]}`} />
-        {trend && (
+        <Icon className={`w-8 h-8 ${alert ? 'text-red-600' : iconColorClasses[color]}`} />
+        {alert ? (
+          <div className="flex items-center text-sm font-medium text-red-600">
+            <AlertTriangle className="w-4 h-4 mr-1" />
+            Requer ação
+          </div>
+        ) : trend && (
           <div className={`flex items-center text-sm ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
             {trend === 'up' ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
             {trendValue}
@@ -97,20 +135,36 @@ const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color
   );
 };
 
-const ChartCard = ({ title, children, className = "" }) => (
+interface ChartCardProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ChartCard = ({ title, children, className = "" }: ChartCardProps) => (
   <div className={`bg-white p-6 rounded-lg border border-gray-200 shadow-sm ${className}`}>
     <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
     {children}
   </div>
 );
 
-const ProgressBar = ({ label, value, total, color = 'blue' }) => {
+type ProgressBarColor = 'blue' | 'green' | 'red' | 'yellow' | 'purple';
+
+interface ProgressBarProps {
+  label: string;
+  value: number;
+  total: number;
+  color?: ProgressBarColor;
+}
+
+const ProgressBar = ({ label, value, total, color = 'blue' }: ProgressBarProps) => {
   const percentage = (value / total) * 100;
-  const colorClasses = {
+  const colorClasses: Record<ProgressBarColor, string> = {
     blue: 'bg-blue-500',
     green: 'bg-green-500',
     red: 'bg-red-500',
-    yellow: 'bg-yellow-500'
+    yellow: 'bg-yellow-500',
+    purple: 'bg-purple-500'
   };
 
   return (
@@ -131,6 +185,10 @@ const ProgressBar = ({ label, value, total, color = 'blue' }) => {
 
 const Home = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeTab, setActiveTab] = useState<HomeTab>(() => {
+    const stored = sessionStorage.getItem(STORAGE_KEY_ACTIVE_TAB);
+    return stored === 'contasAPagar' ? 'contasAPagar' : 'recebiveis';
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -140,9 +198,20 @@ const Home = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const handleTabChange = (tab: HomeTab) => {
+    setActiveTab(tab);
+    sessionStorage.setItem(STORAGE_KEY_ACTIVE_TAB, tab);
+  };
+
+  // Métricas que exigem ação do usuário quando acima dos limiares
+  const pendingAlert = receivablesData.transactional.pendingProcessing > ALERT_THRESHOLDS.pendingProcessing;
+  const fileErrorAlert = receivablesData.fileExchange.errorRate > ALERT_THRESHOLDS.errorRate;
+  const queueAlert = payablesData.processing.queueSize > ALERT_THRESHOLDS.queueSize;
+  const automationFailureAlert = payablesData.automations.failedAutomations > ALERT_THRESHOLDS.failedAutomations;
+
   return (
     <div className="p-8 bg-gray-50 min-h-full max-h-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="w-full space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between pt-4">
           <div>
@@ -150,6 +219,11 @@ const Home = () => {
             <p className="text-gray-600 mt-1">
               Visão geral dos processos de escrituração - {currentTime.toLocaleDateString('pt-BR')} às {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </p>
+            {isMockData && (
+              <span className="inline-flex items-center mt-2 px-2.5 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                Dados de demonstração
+              </span>
+            )}
           </div>
           <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             <RefreshCw className="w-4 h-4 mr-2" />
@@ -157,13 +231,29 @@ const Home = () => {
           </button>
         </div>
 
-        {/* Contas a Receber Section */}
-        <div className="space-y-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-1 h-8 bg-blue-600 rounded"></div>
-            <h2 className="text-2xl font-bold text-gray-900">Contas a Receber</h2>
-          </div>
+        {/* Navegação por abas */}
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8" aria-label="Seções do dashboard">
+            {HOME_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`pb-3 px-1 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-[#0070f2] text-[#0070f2]'
+                    : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
+                }`}
+                aria-current={activeTab === tab.id ? 'page' : undefined}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
 
+        {/* Aba Recebíveis */}
+        {activeTab === 'recebiveis' && (
+        <div className="space-y-6">
           {/* Transacional de Escrituração */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Transacional de Escrituração de Duplicatas</h3>
@@ -192,6 +282,7 @@ const Home = () => {
                 subtitle="Aguardando processamento"
                 icon={Clock}
                 color="yellow"
+                alert={pendingAlert}
               />
               <StatCard
                 title="Tempo Médio"
@@ -268,7 +359,13 @@ const Home = () => {
                 />
               </div>
               <div className="flex items-center justify-center">
-                <div className="text-center">
+                <div className={`text-center ${fileErrorAlert ? 'bg-red-50 ring-2 ring-red-300 rounded-lg px-8 py-6' : ''}`}>
+                  {fileErrorAlert && (
+                    <div className="flex items-center justify-center text-sm font-medium text-red-600 mb-2">
+                      <AlertTriangle className="w-4 h-4 mr-1" />
+                      Acima do limite esperado
+                    </div>
+                  )}
                   <div className="text-4xl font-bold text-red-600 mb-2">
                     {receivablesData.fileExchange.errorRate}%
                   </div>
@@ -281,14 +378,11 @@ const Home = () => {
             </div>
           </ChartCard>
         </div>
+        )}
 
-        {/* Contas a Pagar Section */}
+        {/* Aba Contas a Pagar */}
+        {activeTab === 'contasAPagar' && (
         <div className="space-y-6">
-          <div className="flex items-center space-x-3">
-            <div className="w-1 h-8 bg-red-600 rounded"></div>
-            <h2 className="text-2xl font-bold text-gray-900">Contas a Pagar</h2>
-          </div>
-
           {/* KPIs de Processamento */}
           <div>
             <h3 className="text-lg font-semibold text-gray-800 mb-4">KPIs de Processamento</h3>
@@ -326,6 +420,7 @@ const Home = () => {
                 subtitle="Aguardando processamento"
                 icon={RefreshCw}
                 color="yellow"
+                alert={queueAlert}
               />
             </div>
           </div>
@@ -395,6 +490,7 @@ const Home = () => {
                 subtitle="Automações com erro"
                 icon={AlertTriangle}
                 color="red"
+                alert={automationFailureAlert}
               />
               <StatCard
                 title="Taxa de Sucesso"
@@ -439,6 +535,7 @@ const Home = () => {
             </div>
           </ChartCard>
         </div>
+        )}
       </div>
     </div>
   );

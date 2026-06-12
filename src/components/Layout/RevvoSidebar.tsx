@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import {
-  House,
+  Home,
   Wallet,
   CreditCard,
-  Bank,
+  Landmark,
   FileText,
-  ChartBar,
-  Gear,
+  BarChart3,
+  Settings,
   User,
-  CaretDown,
-  CaretRight,
+  ChevronDown,
+  ChevronRight,
   Bell
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 
 interface MenuItem {
   id: string;
@@ -25,7 +25,7 @@ const menuItems: MenuItem[] = [
   {
     id: 'dashboard',
     label: 'Dashboard',
-    icon: House,
+    icon: Home,
     path: '/dashboard'
   },
   {
@@ -47,13 +47,13 @@ const menuItems: MenuItem[] = [
   {
     id: 'gestao-domicilios',
     label: 'Gestão de Domicílios',
-    icon: Bank,
+    icon: Landmark,
     path: '/gestao-domicilios'
   },
   {
     id: 'relatorios',
     label: 'Relatórios',
-    icon: ChartBar,
+    icon: BarChart3,
     path: '/relatorios'
   }
 ];
@@ -79,7 +79,7 @@ export default function RevvoSidebar({ activePath = '/notificacoes-duplicatas' }
       <div className="px-6 py-6 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-            <FileText size={24} className="text-white" weight="bold" />
+            <FileText size={24} className="text-white" />
           </div>
           <span className="text-xl font-bold text-gray-900">Revvo</span>
         </div>
@@ -106,16 +106,15 @@ export default function RevvoSidebar({ activePath = '/notificacoes-duplicatas' }
                   <div className="flex items-center gap-3">
                     <item.icon
                       size={20}
-                      weight={isMenuActive ? 'fill' : 'regular'}
                       className={isMenuActive && !hasSubmenu ? 'text-blue-700' : 'text-gray-600'}
                     />
                     <span>{item.label}</span>
                   </div>
                   {hasSubmenu && (
                     isExpanded ? (
-                      <CaretDown size={16} className="text-gray-500" />
+                      <ChevronDown size={16} className="text-gray-500" />
                     ) : (
-                      <CaretRight size={16} className="text-gray-500" />
+                      <ChevronRight size={16} className="text-gray-500" />
                     )
                   )}
                 </button>
@@ -150,7 +149,7 @@ export default function RevvoSidebar({ activePath = '/notificacoes-duplicatas' }
           <span>Notificações</span>
         </button>
         <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-          <Gear size={20} className="text-gray-600" />
+          <Settings size={20} className="text-gray-600" />
           <span>Configurações</span>
         </button>
         <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">

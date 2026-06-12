@@ -1,4 +1,3 @@
-import React from 'react';
 import EscrituracaoDuplicata from '@/modules/escrituracaoDuplicata';
 import { ROUTES } from '@/constants/routes';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CheckCircle, Buildings, Receipt, Notepad, Wallet } from '@phosphor-icons/react';
+import { CheckCircle2, Building2, Receipt, NotepadText, Wallet } from 'lucide-react';
 import { useVincularCreditoWizardStore, selectComputed } from '../store';
 import { StepCard, StepCardTitle, StepCardSubtitle } from '../styles';
 
@@ -39,7 +39,7 @@ export function StepConfirm() {
       <StepCard>
         <div className="flex items-center gap-2 mb-4">
           <div className="w-8 h-8 rounded-lg bg-[#0070f2]/10 flex items-center justify-center">
-            <Buildings size={16} className="text-[#0070f2]" weight="fill" />
+            <Building2 size={16} className="text-[#0070f2]" />
           </div>
           <div>
             <StepCardTitle>Resumo da vinculação</StepCardTitle>
@@ -75,7 +75,7 @@ export function StepConfirm() {
 
       <StepCard>
         <div className="flex items-center gap-2 mb-3">
-          <Receipt size={18} className="text-[#0070f2]" weight="fill" />
+          <Receipt size={18} className="text-[#0070f2]" />
           <StepCardTitle>Notas fiscais que receberão o abatimento</StepCardTitle>
         </div>
         <div className="overflow-x-auto border border-gray-100 rounded-lg">
@@ -140,7 +140,7 @@ export function StepConfirm() {
 
       <StepCard>
         <div className="flex items-center gap-2 mb-3">
-          <Notepad size={18} className="text-[#0070f2]" weight="fill" />
+          <NotepadText size={18} className="text-[#0070f2]" />
           <StepCardTitle>Observações (opcional)</StepCardTitle>
         </div>
         <textarea
@@ -156,7 +156,7 @@ export function StepConfirm() {
 
       {balanced ? (
         <div className="flex items-start gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <CheckCircle size={16} className="text-emerald-600 mt-0.5 flex-shrink-0" weight="fill" />
+          <CheckCircle2 size={16} className="text-emerald-600 mt-0.5 flex-shrink-0" />
           <div className="text-xs text-emerald-800">
             <p className="font-semibold">A conta fecha sem diferença.</p>
             <p className="opacity-80 mt-0.5">
@@ -168,7 +168,7 @@ export function StepConfirm() {
       ) : (
         hasResidual && (
           <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <Wallet size={16} className="text-amber-600 mt-0.5 flex-shrink-0" weight="fill" />
+            <Wallet size={16} className="text-amber-600 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-amber-900 flex-1">
               <p className="font-semibold">
                 Saldo restante de {formatCurrency(residual)} será preservado.

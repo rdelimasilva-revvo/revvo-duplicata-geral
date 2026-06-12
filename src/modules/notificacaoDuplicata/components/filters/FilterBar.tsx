@@ -1,5 +1,4 @@
-import { ChevronDown, Search, X } from 'lucide-react';
-import { FunnelSimple } from '@phosphor-icons/react';
+import { ChevronDown, Search, X, Filter } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/modules/notificacaoDuplicata/components/ui/Button';
 import { BillFilters } from '@/modules/notificacaoDuplicata/types/bill';
@@ -38,7 +37,7 @@ export function FilterBar({ onFilterChange }: FilterBarProps) {
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="flex items-center gap-3">
-            <FunnelSimple className="w-5 h-5 text-gray-700" weight="regular" />
+            <Filter className="w-5 h-5 text-gray-700" />
             <span className="text-base font-medium text-gray-900">Filtros</span>
           </div>
           <ChevronDown

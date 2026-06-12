@@ -7,16 +7,13 @@ import {
   ShieldCheck,
   Scale,
   Warehouse,
-} from 'lucide-react';
-import {
-  DownloadSimple,
+  Download,
   X as XIcon,
-  ChatCircleText,
-  ClockCounterClockwise,
-  SealCheck,
-  FilePdf,
+  MessageSquareText,
+  History,
+  BadgeCheck,
   Check,
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import { useAgreementStore } from '../store';
 import { StatusBadge } from '../components/StatusBadge';
 import { useToast } from '@/context/ToastContext';
@@ -34,9 +31,9 @@ interface SupplierAgreementViewProps {
 type TabId = 'documento' | 'extrato' | 'repositorio';
 
 const TABS: { id: TabId; label: string; icon: React.ComponentType<{ size?: number; weight?: 'regular' | 'fill' | 'bold' }> }[] = [
-  { id: 'documento', label: 'Documento', icon: FilePdf },
-  { id: 'extrato', label: 'Extrato de Créditos', icon: ClockCounterClockwise },
-  { id: 'repositorio', label: 'Central de Documentos', icon: DownloadSimple },
+  { id: 'documento', label: 'Documento', icon: FileText },
+  { id: 'extrato', label: 'Extrato de Créditos', icon: History },
+  { id: 'repositorio', label: 'Central de Documentos', icon: Download },
 ];
 
 function downloadBlob(filename: string, content: string, mime: string) {
@@ -81,7 +78,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
             aria-label="Fechar"
             className="absolute top-3 right-3 inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
           >
-            <XIcon size={16} weight="regular" />
+            <XIcon size={16} />
           </button>
           <div className="w-12 h-12 rounded-full bg-slate-100 mx-auto flex items-center justify-center mb-3">
             <Warehouse className="w-5 h-5 text-slate-400" />
@@ -225,7 +222,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
             title="Fechar"
             className="w-8 h-8 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
           >
-            <XIcon size={16} weight="bold" />
+            <XIcon size={16} />
           </button>
         </div>
       </header>
@@ -290,7 +287,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                       : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50/70'
                   }`}
                 >
-                  <Icon size={14} weight={active ? 'fill' : 'regular'} />
+                  <Icon size={14} />
                   {t.label}
                   {active && (
                     <span className="absolute left-4 right-4 bottom-0 h-0.5 bg-[#0070f2] rounded-t" />
@@ -315,7 +312,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                     onClick={handleDownloadContract}
                     className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:border-[#0070f2] hover:text-[#0070f2] hover:bg-blue-50 transition-colors"
                   >
-                    <DownloadSimple size={13} weight="bold" />
+                    <Download size={13} />
                     Baixar PDF do Acordo
                   </button>
                 </div>
@@ -383,7 +380,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                   onClick={handleDownloadStatement}
                   className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:border-[#0070f2] hover:text-[#0070f2] hover:bg-blue-50 transition-colors"
                 >
-                  <DownloadSimple size={13} weight="bold" />
+                  <Download size={13} />
                   Baixar Extrato
                 </button>
               </div>
@@ -475,7 +472,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                 onClick={openSignature}
                 className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-semibold transition-colors shadow-sm"
               >
-                <SealCheck size={14} weight="bold" />
+                <BadgeCheck size={14} />
                 Assinar digitalmente
               </button>
               <button
@@ -483,7 +480,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                 onClick={openContest}
                 className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-white border border-rose-200 text-rose-700 text-xs font-semibold hover:bg-rose-50 active:bg-rose-100 transition-colors"
               >
-                <ChatCircleText size={14} weight="bold" />
+                <MessageSquareText size={14} />
                 Contestar proposta
               </button>
             </div>
@@ -596,7 +593,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
               onClick={submitContest}
               className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <ChatCircleText size={13} weight="bold" />
+              <MessageSquareText size={13} />
               Enviar Contestação
             </button>
           </div>
@@ -642,7 +639,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
                     : 'bg-white border-gray-300 hover:border-emerald-400'
                 }`}
               >
-                {agreedTerms && <Check size={10} weight="bold" className="text-white" />}
+                {agreedTerms && <Check size={10} className="text-white" />}
               </span>
               <span className="text-gray-700">
                 Li e <span className="font-semibold">concordo com os termos</span> do acordo.
@@ -659,7 +656,7 @@ export function SupplierAgreementView({ agreementId, onBack }: SupplierAgreement
               disabled={!agreedTerms || formalizing}
               className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <SealCheck size={13} weight="bold" />
+              <BadgeCheck size={13} />
               {formalizing ? 'Formalizando…' : 'Formalizar assinatura'}
             </button>
           </div>
@@ -743,7 +740,7 @@ function ModalShell({
             aria-label="Fechar"
             className="w-8 h-8 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
           >
-            <XIcon size={15} weight="bold" />
+            <XIcon size={15} />
           </button>
         </div>
         {children}

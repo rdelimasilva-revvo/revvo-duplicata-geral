@@ -1,4 +1,4 @@
-import { XCircle, X } from '@phosphor-icons/react';
+import { XCircle, X } from 'lucide-react';
 import { useState } from 'react';
 import { Bill } from '@/modules/gestorDomicilio/types/bill';
 
@@ -27,7 +27,7 @@ export function RejectConfirmationModal({
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-              <XCircle className="w-6 h-6 text-red-600" weight="fill" />
+              <XCircle className="w-6 h-6 text-red-600" />
             </div>
             <h2 className="text-lg font-semibold text-gray-900">Confirmar Rejeição</h2>
           </div>

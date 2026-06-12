@@ -3,8 +3,11 @@ import { SERVICE_URLS } from './urls';
 export const ROUTES = {
   HOME: 'home',
   RECEIVABLES: 'receivables',
+  RECEIVABLES_HOME: 'receivables-home',
+  RECEIVABLES_NOTAS_FISCAIS: 'receivables-notas-fiscais',
   RECEIVABLES_AUTOMATIONS: 'receivables-automations',
   RECEIVABLES_LIQUIDATIONS: 'receivables-liquidations',
+  RECEIVABLES_SACADOS: 'receivables-sacados',
   DEBTS: 'debts',
   DEBTS_OVERVIEW: 'debts-overview',
   DEBTS_COMMERCIAL_LINES: 'debts-commercial-lines',
@@ -36,6 +39,7 @@ export const ROUTES = {
   AGENTE_INTERMEDIADOR_FORNECEDORES: 'agente-intermediador/fornecedores',
   AGENTE_INTERMEDIADOR_DUPLICATAS: 'agente-intermediador/duplicatas',
   AGENTE_INTERMEDIADOR_CONTRATOS: 'agente-intermediador/contratos',
+  AGENTE_INTERMEDIADOR_ONERACAO: 'agente-intermediador/oneracao',
   AUTOMACOES: 'automacoes',
   NOTIFICACOES_DUPLICATAS: 'notificacoes-duplicatas',
   NOTIFICACOES_DUPLICATAS_RECEBIDAS: 'notificacoes-duplicatas/recebidas',
@@ -46,9 +50,11 @@ export const ROUTES = {
   FORNECEDOR_DIVERGENTE: 'fornecedor-divergente',
   FORNECEDOR_DIVERGENTE_LEGACY: 'fornecedor-divergente-legacy',
   PAYMENT_REPORT: 'payment-report',
+  MENU_VISIBILITY: 'ocultar-menus',
   ACORDOS_COMERCIAIS: 'acordos-comerciais',
   ACORDOS_COMERCIAIS_REVISAO_PROPOSTA: 'acordos-comerciais/revisao-proposta',
   USER_PROFILE: 'meu-perfil',
+  INTEGRATIONS_STATUS: 'integrations-status',
 } as const;
 
 export const PROJECT_URLS: Record<string, string> = {

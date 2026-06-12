@@ -17,18 +17,15 @@ import {
   Hourglass,
   Clock,
   User as UserIcon,
-} from 'lucide-react';
-import {
   Ticket,
-  CurrencyCircleDollar,
-  Trash,
-  CaretDown,
+  CircleDollarSign,
+  Trash2,
+  ChevronDown,
   Flag,
-  FileArrowUp,
-  LinkSimple,
-  Warning,
+  FileUp,
+  Link,
   XCircle,
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
@@ -747,7 +744,7 @@ export function RevisaoAcordoComercial({
             className="flex items-start gap-3 rounded-xl border border-orange-300 bg-orange-50 px-4 py-3.5 shadow-sm"
           >
             <div className="w-9 h-9 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center flex-shrink-0">
-              <Warning size={18} weight="fill" />
+              <AlertTriangle size={18} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -919,9 +916,8 @@ export function RevisaoAcordoComercial({
                                 className="w-6 h-6 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 flex items-center justify-center transition-colors flex-shrink-0"
                                 title="Ver extrato de abatimento"
                               >
-                                <CaretDown
+                                <ChevronDown
                                   size={14}
-                                  weight="bold"
                                   className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                                 />
                               </button>
@@ -951,7 +947,7 @@ export function RevisaoAcordoComercial({
                                     className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold text-orange-700 bg-orange-100 border border-orange-200 rounded-full hover:bg-orange-200 transition-colors"
                                     title="Abrir painel de resolução de conflito"
                                   >
-                                    <Flag size={10} weight="fill" />
+                                    <Flag size={10} />
                                     Em conflito
                                   </button>
                                 );
@@ -982,7 +978,7 @@ export function RevisaoAcordoComercial({
                                       key={l.id}
                                       className="inline-flex items-center gap-1 pl-1.5 pr-1 py-0.5 bg-blue-50 border border-blue-200 rounded-full text-[10px] text-blue-800"
                                     >
-                                      <CurrencyCircleDollar size={10} weight="fill" />
+                                      <CircleDollarSign size={10} />
                                       <span className="truncate max-w-[90px]" title={l.creditLabel}>
                                         {l.creditLabel}
                                       </span>
@@ -992,7 +988,7 @@ export function RevisaoAcordoComercial({
                                         aria-label="Remover vínculo"
                                         className="w-3.5 h-3.5 rounded-full hover:bg-blue-100 text-blue-600 hover:text-rose-600 flex items-center justify-center"
                                       >
-                                        <Trash size={9} weight="bold" />
+                                        <Trash2 size={9} />
                                       </button>
                                     </span>
                                   ))}
@@ -1016,7 +1012,7 @@ export function RevisaoAcordoComercial({
                                 className={`inline-flex items-center gap-1 h-8 px-2 rounded-md text-xs font-semibold text-[#0070f2] bg-blue-50 hover:bg-blue-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${focusRing}`}
                                 title="Vincular crédito a esta NF"
                               >
-                                <Ticket size={12} weight="bold" />
+                                <Ticket size={12} />
                                 <span className="hidden lg:inline">Vincular</span>
                               </button>
                               <button
@@ -1053,7 +1049,7 @@ export function RevisaoAcordoComercial({
                                     : 'text-orange-600 bg-orange-50 hover:bg-orange-100'
                                 } ${focusRing}`}
                               >
-                                <Flag size={12} weight={isContested ? 'fill' : 'bold'} />
+                                <Flag size={12} />
                                 <span className="hidden lg:inline">Contestar</span>
                               </button>
                               <a
@@ -1073,7 +1069,7 @@ export function RevisaoAcordoComercial({
                             <td colSpan={7} className="px-4 sm:px-6 py-4">
                               <div className="flex flex-col gap-3">
                                 <div className="flex items-center gap-2 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
-                                  <LinkSimple size={13} weight="bold" className="text-[#0070f2]" />
+                                  <Link size={13} className="text-[#0070f2]" />
                                   Extrato de abatimento
                                 </div>
                                 {!hasAbatement ? (
@@ -1086,7 +1082,7 @@ export function RevisaoAcordoComercial({
                                       <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-2.5">
                                         <div className="flex items-center gap-2.5">
                                           <div className="w-7 h-7 rounded-md bg-emerald-50 flex items-center justify-center">
-                                            <CurrencyCircleDollar size={14} weight="fill" className="text-emerald-600" />
+                                            <CircleDollarSign size={14} className="text-emerald-600" />
                                           </div>
                                           <div className="flex flex-col">
                                             <span className="text-xs font-semibold text-gray-800">
@@ -1434,7 +1430,7 @@ function CreditContestModal({
         <div className="px-5 py-4 border-b border-slate-100 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3 min-w-0">
             <div className="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
-              <Warning size={20} weight="fill" />
+              <AlertTriangle size={20} />
             </div>
             <div className="min-w-0">
               <h3 className="text-base font-semibold text-slate-900">Contestar crédito</h3>
@@ -1453,7 +1449,7 @@ function CreditContestModal({
             aria-label="Fechar"
             className="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 flex items-center justify-center transition-colors flex-shrink-0"
           >
-            <XCircle size={20} weight="fill" />
+            <XCircle size={20} />
           </button>
         </div>
 
@@ -1463,7 +1459,7 @@ function CreditContestModal({
               <div key={l.id} className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="w-7 h-7 rounded-md bg-white border border-slate-200 flex items-center justify-center flex-shrink-0">
-                    <CurrencyCircleDollar size={14} weight="fill" className="text-[#0070f2]" />
+                    <CircleDollarSign size={14} className="text-[#0070f2]" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold text-slate-800 truncate">{l.creditLabel}</p>
@@ -1540,7 +1536,7 @@ function CreditContestModal({
               </>
             ) : (
               <>
-                <Warning size={16} weight="bold" />
+                <AlertTriangle size={16} />
                 Registrar contestação
               </>
             )}
@@ -1573,7 +1569,7 @@ function CreditLinkRow({ link, canContest, onOpenContest, onOpenConflict }: Cred
     <div className="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-2.5 shadow-sm">
       <div className="flex items-center gap-2.5 min-w-0">
         <div className="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center flex-shrink-0">
-          <Ticket size={14} weight="fill" className="text-[#0070f2]" />
+          <Ticket size={14} className="text-[#0070f2]" />
         </div>
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2 min-w-0">
@@ -1603,7 +1599,7 @@ function CreditLinkRow({ link, canContest, onOpenContest, onOpenConflict }: Cred
             className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md text-[11px] font-bold text-orange-800 bg-orange-100 border border-orange-300 hover:bg-orange-200 transition-colors"
             title="Abrir painel de resolução de conflito"
           >
-            <Warning size={12} weight="fill" />
+            <AlertTriangle size={12} />
             Resolver conflito
           </button>
         ) : allowContest ? (
@@ -1613,7 +1609,7 @@ function CreditLinkRow({ link, canContest, onOpenContest, onOpenConflict }: Cred
             className="inline-flex items-center gap-1.5 h-8 px-2.5 rounded-md text-xs font-semibold text-orange-700 border border-orange-200 bg-orange-50 hover:bg-orange-100 transition-colors"
             title="Contestar este crédito"
           >
-            <Warning size={13} weight="bold" />
+            <AlertTriangle size={13} />
             Contestar
           </button>
         ) : null}
@@ -1742,7 +1738,7 @@ function EmptyTableState() {
       className="flex flex-col items-center justify-center py-14 px-6 text-center"
     >
       <div className="mx-auto w-20 h-20 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center mb-4">
-        <FileArrowUp size={40} className="text-slate-300" weight="duotone" />
+        <FileUp size={40} className="text-slate-300" />
       </div>
       <p className="text-sm font-semibold text-gray-800">
         Nenhuma nota fiscal encontrada
@@ -1763,7 +1759,7 @@ function EmptyTableState() {
         onClick={handleUploadClick}
         className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 bg-[#0070f2] text-white text-xs font-semibold rounded-lg hover:bg-[#005bc4] shadow-sm hover:shadow-md transition-all"
       >
-        <FileArrowUp size={16} weight="bold" />
+        <FileUp size={16} />
         Subir XML de NF em Aberto
       </button>
     </div>
@@ -2213,7 +2209,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
         <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
-              <Warning size={20} weight="fill" />
+              <AlertTriangle size={20} />
             </div>
             <div>
               <h3 id="contest-modal-title" className="text-base font-semibold text-gray-900">
@@ -2231,7 +2227,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
             aria-label="Fechar"
             disabled={submitting}
           >
-            <XCircle size={20} weight="fill" />
+            <XCircle size={20} />
           </button>
         </div>
 
@@ -2289,7 +2285,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
               </>
             ) : (
               <>
-                <Warning size={16} weight="bold" />
+                <AlertTriangle size={16} />
                 Registrar contestação
               </>
             )}

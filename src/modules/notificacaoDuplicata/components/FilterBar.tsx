@@ -1,4 +1,4 @@
-import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react';
+import { ChevronDown, Search, X } from 'lucide-react';
 import { useState } from 'react';
 
 export function FilterBar() {
@@ -7,7 +7,7 @@ export function FilterBar() {
   return (
     <div className="bg-white rounded-lg shadow-sm p-4 w-full">
       <div className="flex items-center gap-2 text-sm text-blue-600 mb-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-        <CaretDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
         <span className="font-medium">Pesquisar faturas</span>
         <span className="font-medium">Pesquisar notificações</span>
       </div>
@@ -37,7 +37,7 @@ export function FilterBar() {
                   placeholder="Digite o código"
                   className="w-full h-[26px] px-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8 text-sm"
                 />
-                <MagnifyingGlass className="w-3 h-3 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2" />
+                <Search className="w-3 h-3 text-gray-400 absolute right-2 top-1/2 -translate-y-1/2" />
               </div>
             </div>
           </div>

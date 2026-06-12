@@ -1,16 +1,7 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  Sparkle,
-  ArrowsClockwise,
-  Warning,
-  CheckCircle,
-  Clock,
-  Lock,
-  Info,
-  Wallet,
-} from '@phosphor-icons/react';
+import { Sparkle, RefreshCw, AlertTriangle, CheckCircle2, Clock, Lock, Info, Wallet } from 'lucide-react';
 import { useVincularCreditoWizardStore, selectComputed } from '../store';
 import { StepCard, StepCardTitle, StepCardSubtitle, WizardButton } from '../styles';
 import { EligibleInvoice } from '../types';
@@ -31,28 +22,28 @@ const STATUS_CFG: Record<
     color: 'text-emerald-700',
     bg: 'bg-emerald-50',
     border: 'border-emerald-200',
-    icon: <CheckCircle size={10} weight="fill" />,
+    icon: <CheckCircle2 size={10} />,
   },
   pendente: {
     label: 'Pendente',
     color: 'text-amber-700',
     bg: 'bg-amber-50',
     border: 'border-amber-200',
-    icon: <Clock size={10} weight="fill" />,
+    icon: <Clock size={10} />,
   },
   em_disputa: {
     label: 'Em Disputa',
     color: 'text-red-700',
     bg: 'bg-red-50',
     border: 'border-red-200',
-    icon: <Warning size={10} weight="fill" />,
+    icon: <AlertTriangle size={10} />,
   },
   bloqueada: {
     label: 'Bloqueada',
     color: 'text-gray-600',
     bg: 'bg-gray-100',
     border: 'border-gray-200',
-    icon: <Lock size={10} weight="fill" />,
+    icon: <Lock size={10} />,
   },
 };
 
@@ -84,7 +75,7 @@ export function StepDistribute() {
     return (
       <StepCard>
         <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
-          <Warning size={16} />
+          <AlertTriangle size={16} />
           Volte à etapa anterior e selecione um crédito antes de distribuir.
         </div>
       </StepCard>
@@ -112,11 +103,11 @@ export function StepDistribute() {
           </div>
           <div className="flex items-center gap-2">
             <WizardButton type="button" $variant="ghost" onClick={clearDistribution}>
-              <ArrowsClockwise size={14} />
+              <RefreshCw size={14} />
               Limpar
             </WizardButton>
             <WizardButton type="button" $variant="primary" onClick={autoDistribute}>
-              <Sparkle size={14} weight="fill" />
+              <Sparkle size={14} />
               Distribuir automaticamente
             </WizardButton>
           </div>
@@ -265,7 +256,7 @@ export function StepDistribute() {
 
         {overspent && (
           <div className="mt-3 flex items-center gap-2 text-[11px] bg-rose-50 border border-rose-200 text-rose-800 rounded-md px-3 py-2">
-            <Warning size={14} weight="fill" />
+            <AlertTriangle size={14} />
             <span>
               O valor distribuído excedeu o crédito em{' '}
               <strong>{formatCurrency(Math.abs(remaining))}</strong>. Reduza os valores antes de
@@ -277,7 +268,7 @@ export function StepDistribute() {
         {!balanced && !overspent && hasResidual && totalAllocated > 0 && (
           <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 space-y-2">
             <div className="flex items-start gap-2">
-              <Wallet size={16} className="text-amber-600 mt-0.5" weight="fill" />
+              <Wallet size={16} className="text-amber-600 mt-0.5" />
               <div className="text-[12px] text-amber-900 flex-1">
                 <p className="font-semibold">
                   A conta não fecha — sobram {formatCurrency(residual)} sem destino
@@ -310,7 +301,7 @@ export function StepDistribute() {
 
         {balanced && (
           <div className="mt-3 flex items-center gap-2 text-[11px] bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-md px-3 py-2">
-            <CheckCircle size={14} weight="fill" />
+            <CheckCircle2 size={14} />
             <span>A conta fecha sem diferença — pronto para revisar.</span>
           </div>
         )}

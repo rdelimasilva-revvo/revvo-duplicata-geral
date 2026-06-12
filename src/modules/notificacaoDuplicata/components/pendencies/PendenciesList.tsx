@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
-import { DotsThreeVertical } from '@phosphor-icons/react';
+import { AlertCircle, CheckCircle, Clock, MoreVertical } from 'lucide-react';
 import { Pendency } from '../../types/pendency';
 import { formatCurrency } from '../../utils/format';
 
@@ -196,7 +195,7 @@ export function PendenciesList({ pendencies, onSelectPendency }: PendenciesListP
                       }}
                       className="text-gray-400 hover:text-gray-600 p-1 hover:bg-gray-200 rounded transition-colors"
                     >
-                      <DotsThreeVertical size={32} />
+                      <MoreVertical size={32} />
                     </button>
                     {openMenuId === pendency.id && (
                       <>

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { X } from '@phosphor-icons/react';
+import { X } from 'lucide-react';
 
 type Role = { id: string; name: string };
 type Company = { id: string; name: string };

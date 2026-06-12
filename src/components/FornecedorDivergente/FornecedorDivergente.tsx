@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Buildings,
+  Building2,
   Clock,
-  FunnelSimple,
+  Filter,
   FileText,
-  CurrencyDollar,
+  DollarSign,
   Phone,
-  Envelope,
+  Mail,
   MapPin,
-  CaretDown,
+  ChevronDown,
   X,
   UserPlus,
-  DotsThree
-} from '@phosphor-icons/react';
+  MoreHorizontal
+} from 'lucide-react';
 import { StatsCard } from './StatsCard';
 
 interface Supplier {
@@ -281,7 +281,7 @@ const FornecedorDivergente = () => {
           <StatsCard
             title="Valor Total em Duplicatas"
             value={formatCurrency(stats.totalValue)}
-            icon={<CurrencyDollar size={20} />}
+            icon={<DollarSign size={20} />}
             layout="stacked"
           />
         </div>
@@ -293,10 +293,10 @@ const FornecedorDivergente = () => {
             onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
           >
             <div className="flex items-center gap-3">
-              <FunnelSimple className="w-5 h-5 text-gray-700" />
+              <Filter className="w-5 h-5 text-gray-700" />
               <span className="font-semibold text-gray-900 text-base">Filtros</span>
             </div>
-            <CaretDown className={`w-5 h-5 text-gray-700 transition-transform ${isFiltersExpanded ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-5 h-5 text-gray-700 transition-transform ${isFiltersExpanded ? 'rotate-180' : ''}`} />
           </button>
 
           {isFiltersExpanded && (
@@ -434,7 +434,7 @@ const FornecedorDivergente = () => {
                           }}
                           className="inline-flex items-center justify-center p-1 rounded hover:bg-gray-100 transition-colors"
                         >
-                          <DotsThree size={24} className="text-gray-500 hover:text-gray-700" />
+                          <MoreHorizontal size={24} className="text-gray-500 hover:text-gray-700" />
                         </button>
                         {openMenuId === supplier.id && (
                           <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
@@ -460,7 +460,7 @@ const FornecedorDivergente = () => {
 
           {filteredSuppliers.length === 0 && (
             <div className="text-center py-12">
-              <Buildings className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 text-lg mb-2">Nenhum fornecedor encontrado</p>
               <p className="text-gray-400">Ajuste os filtros ou tente uma busca diferente</p>
             </div>
@@ -473,7 +473,7 @@ const FornecedorDivergente = () => {
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg bg-sky-50 flex items-center justify-center">
-                    <Buildings className="w-5 h-5 text-sky-600" />
+                    <Building2 className="w-5 h-5 text-sky-600" />
                   </div>
                   <div>
                     <h2 className="text-base font-semibold text-gray-900">Detalhes do Fornecedor</h2>
@@ -579,7 +579,7 @@ const FornecedorDivergente = () => {
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider mr-1">Contato</span>
                     {selectedSupplier.contact.email && (
                       <div className="flex items-center gap-1.5">
-                        <Envelope className="w-3.5 h-3.5 text-gray-400" />
+                        <Mail className="w-3.5 h-3.5 text-gray-400" />
                         <span className="text-sm text-gray-700">{selectedSupplier.contact.email}</span>
                       </div>
                     )}

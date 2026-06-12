@@ -2,16 +2,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FileText, CheckCircle2, AlertTriangle, Lock, Clock, Send,
   LayoutDashboard, Building2, Coins, Info, Inbox, X, XCircle, FileX, Wallet, Files,
-} from 'lucide-react';
-import {
-  MagicWand,
-  WarningCircle,
-  TrendUp,
-  CheckCircle as PhCheckCircle,
-  LinkSimple,
-  ChatsCircle,
+  Wand2,
+  AlertCircle,
+  TrendingUp,
+  CheckCircle2 as PhCheckCircle,
+  Link,
+  MessagesSquare,
   Flag,
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
 import { AllCreditsList, type CreditRowData } from '../components/AllCreditsList';
@@ -520,7 +518,7 @@ function BindingView({ credit, onBack, onCancelAll, onSubmit }: BindingViewProps
                   title="Preenche automaticamente os valores a abater usando o saldo disponível"
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0070f2] bg-white border border-[#0070f2]/30 rounded-lg hover:bg-[#0070f2]/5 hover:border-[#0070f2] transition-colors"
                 >
-                  <MagicWand size={14} weight="fill" />
+                  <Wand2 size={14} />
                   Auto-Distribuir
                 </button>
               )}
@@ -751,7 +749,7 @@ function BindingView({ credit, onBack, onCancelAll, onSubmit }: BindingViewProps
               }`}
             >
               {saldoNegativo ? (
-                <WarningCircle size={16} weight="fill" />
+                <AlertCircle size={16} />
               ) : (
                 <Send className="w-4 h-4" />
               )}
@@ -955,7 +953,7 @@ function CashOutEvitadoWidget({
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-            <TrendUp size={22} className="text-emerald-600" weight="bold" />
+            <TrendingUp size={22} className="text-emerald-600" />
           </div>
           <div>
             <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
@@ -992,8 +990,8 @@ type StepKey = 'created' | 'linked' | 'review' | 'settlement';
 
 const STEPPER_STEPS: { key: StepKey; label: string; icon: React.ComponentType<any> }[] = [
   { key: 'created', label: 'Criado', icon: FileText },
-  { key: 'linked', label: 'Créditos Vinculados', icon: LinkSimple },
-  { key: 'review', label: 'Revisado pelo Fornecedor', icon: ChatsCircle },
+  { key: 'linked', label: 'Créditos Vinculados', icon: Link },
+  { key: 'review', label: 'Revisado pelo Fornecedor', icon: MessagesSquare },
   { key: 'settlement', label: 'Pronto p/ Liquidação', icon: PhCheckCircle },
 ];
 
@@ -1018,7 +1016,7 @@ function AgreementStepper({ currentStep }: { currentStep: StepKey }) {
                         : 'bg-gray-50 border border-gray-200 text-gray-400'
                   }`}
                 >
-                  <Icon size={16} weight={isDone || isCurrent ? 'fill' : 'regular'} />
+                  <Icon size={16} />
                 </div>
                 <div className="min-w-0 hidden sm:block">
                   <p

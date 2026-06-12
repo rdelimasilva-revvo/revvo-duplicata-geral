@@ -1,11 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Ticket,
-  X,
-  CheckCircle,
-  MagnifyingGlass,
-  CurrencyCircleDollar,
-} from '@phosphor-icons/react';
+import { Ticket, X, CheckCircle2, Search, CircleDollarSign } from 'lucide-react';
 import { useCreditLinksStore, type AvailableCredit } from './store';
 
 interface CreditLinkDrawerProps {
@@ -77,7 +71,7 @@ export function CreditLinkDrawer({ proposalCode, invoice, onClose }: CreditLinkD
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-8 h-8 rounded-lg bg-[#E6F0FF] text-[#007BFF] flex items-center justify-center">
-                <Ticket size={18} weight="duotone" />
+                <Ticket size={18} />
               </div>
               <h3 className="text-base font-semibold text-gray-900">Vincular Crédito</h3>
             </div>
@@ -95,15 +89,14 @@ export function CreditLinkDrawer({ proposalCode, invoice, onClose }: CreditLinkD
             aria-label="Fechar"
             className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 flex items-center justify-center transition-colors"
           >
-            <X size={18} weight="bold" />
+            <X size={18} />
           </button>
         </div>
 
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="relative">
-            <MagnifyingGlass
+            <Search
               size={16}
-              weight="bold"
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
@@ -152,7 +145,7 @@ export function CreditLinkDrawer({ proposalCode, invoice, onClose }: CreditLinkD
                         isSelected ? 'bg-[#007BFF] text-white' : 'bg-emerald-50 text-emerald-600'
                       }`}
                     >
-                      <CurrencyCircleDollar size={16} weight="fill" />
+                      <CircleDollarSign size={16} />
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-gray-900 truncate">{c.label}</div>
@@ -201,7 +194,7 @@ export function CreditLinkDrawer({ proposalCode, invoice, onClose }: CreditLinkD
               disabled={!validAmount || submitting}
               className="h-11 px-5 inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#007BFF] hover:bg-[#0066E0] rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              <CheckCircle size={16} weight="fill" />
+              <CheckCircle2 size={16} />
               Aplicar
             </button>
           </div>

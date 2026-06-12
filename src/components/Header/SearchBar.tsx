@@ -100,7 +100,7 @@ const SearchBar = ({ onNavigate }: SearchBarProps) => {
         <input
           ref={inputRef}
           type="text"
-          placeholder="Buscar paginas... (Ctrl+K)"
+          placeholder="Buscar páginas... (Ctrl+K)"
           className="w-full h-[32px] pl-9 pr-8 text-sm rounded-md border border-gray-300 focus:outline-none focus:border-[#0070f2] focus:ring-1 focus:ring-[#0070f2] placeholder-gray-400"
           value={query}
           onChange={(e) => {

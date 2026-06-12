@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import {
   FileText,
   Clock,
-  ProhibitInset,
-  CheckCircle,
-  CaretDown,
-  CaretUp,
-  DotsThree,
+  Ban,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  MoreHorizontal,
   Calendar
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -45,7 +45,7 @@ const KPICard = ({
         <p className="text-3xl font-bold text-gray-900">{value}</p>
       </div>
       <div className={`${iconBg} rounded-lg p-3`}>
-        <Icon size={24} className={iconColor} weight="regular" />
+        <Icon size={24} className={iconColor} />
       </div>
     </div>
     {footer && (
@@ -232,14 +232,14 @@ export default function NotificacoesDuplicatasPage() {
             iconColor="text-amber-600"
           />
           <KPICard
-            icon={ProhibitInset}
+            icon={Ban}
             label="Rejeitadas"
             value="12"
             iconBg="bg-red-50"
             iconColor="text-red-600"
           />
           <KPICard
-            icon={CheckCircle}
+            icon={CheckCircle2}
             label="Aceitas"
             value="1.180"
             iconBg="bg-emerald-50"
@@ -320,9 +320,9 @@ export default function NotificacoesDuplicatasPage() {
           >
             <span className="font-semibold text-gray-900">Filtros de Notificações</span>
             {showFilters ? (
-              <CaretUp size={20} className="text-gray-500" />
+              <ChevronUp size={20} className="text-gray-500" />
             ) : (
-              <CaretDown size={20} className="text-gray-500" />
+              <ChevronDown size={20} className="text-gray-500" />
             )}
           </button>
           {showFilters && (
@@ -474,7 +474,7 @@ export default function NotificacoesDuplicatasPage() {
                           )}
                           className="p-1 hover:bg-gray-100 rounded transition-colors"
                         >
-                          <DotsThree size={20} className="text-gray-600" />
+                          <MoreHorizontal size={20} className="text-gray-600" />
                         </button>
                         {activeDropdown === notification.id && (
                           <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">

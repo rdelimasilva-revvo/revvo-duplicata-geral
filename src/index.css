@@ -7,6 +7,12 @@
     box-sizing: border-box;
   }
 
+  html {
+    /* Aumenta a fonte base de toda a aplicação (16px -> 18px).
+       Como o Tailwind usa unidades rem, todo o texto escala junto. */
+    font-size: 112.5%;
+  }
+
   html, body {
     overflow-x: hidden;
     max-width: 100vw;

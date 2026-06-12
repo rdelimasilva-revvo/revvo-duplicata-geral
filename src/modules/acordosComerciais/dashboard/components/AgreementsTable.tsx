@@ -1,17 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowUpRight } from 'lucide-react';
-import {
-  MagnifyingGlass,
-  Check,
-  CheckCircle as CheckCircleIcon,
-  Export as ExportIcon,
-  X as XIcon,
-  FileArrowDown,
-  Link as LinkIcon,
-  ClockCounterClockwise,
-  Funnel,
-  Warning,
-} from '@phosphor-icons/react';
+import { ArrowUpRight, Search, Check, CheckCircle2 as CheckCircleIcon, Share as ExportIcon, X as XIcon, FileDown, Link as LinkIcon, History, Filter, AlertTriangle } from 'lucide-react';
 import { useAgreementsDashboardStore } from '../store';
 import {
   CONTRACT_TYPE_LABEL,
@@ -272,7 +260,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               title="Exportar relatório de auditoria (PDF)"
             >
-              <FileArrowDown size={13} weight="bold" />
+              <FileDown size={13} />
               PDF
             </button>
             <button
@@ -280,7 +268,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
               title="Exportar relatório de auditoria (CSV)"
             >
-              <ExportIcon size={13} weight="bold" />
+              <ExportIcon size={13} />
               CSV
             </button>
             {hasFilters && (
@@ -291,7 +279,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                 }}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold text-gray-600 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <XIcon size={12} weight="bold" />
+                <XIcon size={12} />
                 Limpar filtros
               </button>
             )}
@@ -300,9 +288,8 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mt-4">
           <div className="relative md:col-span-2">
-            <MagnifyingGlass
+            <Search
               size={14}
-              weight="bold"
               className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
@@ -341,7 +328,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
 
         <div className="flex items-center gap-2 mt-3 flex-wrap">
           <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider inline-flex items-center gap-1">
-            <Funnel size={11} weight="fill" /> Filtros rápidos
+            <Filter size={11} /> Filtros rápidos
           </span>
           {QUICK_FILTERS.map((q) => {
             const active = quickFilter === q.id;
@@ -356,9 +343,9 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                     : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                 }`}
               >
-                {q.id === 'with_credit' && <LinkIcon size={11} weight="bold" />}
-                {q.id === 'pending' && <ClockCounterClockwise size={11} weight="bold" />}
-                {q.id === 'approved' && <CheckCircleIcon size={11} weight="bold" />}
+                {q.id === 'with_credit' && <LinkIcon size={11} />}
+                {q.id === 'pending' && <History size={11} />}
+                {q.id === 'approved' && <CheckCircleIcon size={11} />}
                 {q.label}
               </button>
             );
@@ -390,7 +377,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                     }`}
                   >
                     {allSelected ? (
-                      <Check size={10} weight="bold" className="text-white" />
+                      <Check size={10} className="text-white" />
                     ) : someSelected ? (
                       <span className="w-2 h-0.5 bg-white rounded" />
                     ) : null}
@@ -423,7 +410,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               <tr>
                 <td colSpan={8} className="px-4 py-12 text-center">
                   <div className="mx-auto w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
-                    <MagnifyingGlass size={22} weight="bold" className="text-gray-400" />
+                    <Search size={22} className="text-gray-400" />
                   </div>
                   <p className="text-sm font-semibold text-gray-700">
                     Nenhum acordo encontrado
@@ -483,7 +470,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                           }`}
                         >
                           {isSelected && (
-                            <Check size={10} weight="bold" className="text-white" />
+                            <Check size={10} className="text-white" />
                           )}
                         </span>
                       </label>
@@ -497,7 +484,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                             className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full"
                             title="Este acordo possui vínculo de crédito"
                           >
-                            <LinkIcon size={9} weight="bold" />
+                            <LinkIcon size={9} />
                             Crédito
                           </span>
                         )}
@@ -506,7 +493,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                             className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold text-orange-700 bg-orange-50 border border-orange-200 rounded-full"
                             title={`Proposta em conflito ${contestedProposalCode} · clique para revisar disputa`}
                           >
-                            <Warning size={9} weight="fill" />
+                            <AlertTriangle size={9} />
                             Em Conflito
                           </span>
                         )}
@@ -515,7 +502,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
                             className="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[9px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-full animate-pulse"
                             title={`Proposta pendente ${pendingProposalCode} · clique para revisar`}
                           >
-                            <ClockCounterClockwise size={9} weight="bold" />
+                            <History size={9} />
                             Rever proposta
                           </span>
                         )}
@@ -582,7 +569,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               disabled={bulkBusy}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white text-[11px] font-semibold transition-colors disabled:opacity-60"
             >
-              <CheckCircleIcon size={12} weight="bold" />
+              <CheckCircleIcon size={12} />
               Aprovar em Lote
             </button>
             <button
@@ -590,7 +577,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               onClick={handleExportSelected}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-white/10 hover:bg-white/20 active:bg-white/30 text-white text-[11px] font-semibold transition-colors"
             >
-              <ExportIcon size={12} weight="bold" />
+              <ExportIcon size={12} />
               Exportar Selecionados
             </button>
             <button
@@ -599,7 +586,7 @@ export function AgreementsTable({ agreements, suppliers, onSelect, onOpenReview 
               aria-label="Limpar seleção"
               className="ml-1 inline-flex items-center justify-center w-8 h-8 rounded-md text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
             >
-              <XIcon size={14} weight="bold" />
+              <XIcon size={14} />
             </button>
           </div>
         </div>

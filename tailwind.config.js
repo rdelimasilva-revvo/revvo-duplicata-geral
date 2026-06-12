@@ -1,3 +1,5 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -14,6 +16,7 @@ export default {
         'input': '48px'
       },
       fontFamily: {
+        'sans': ['Onest', ...defaultTheme.fontFamily.sans],
         'onest': ['Onest', 'sans-serif']
       },
       backgroundImage: {

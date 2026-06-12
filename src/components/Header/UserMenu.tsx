@@ -6,6 +6,7 @@ import { clearStorage } from '../../utils/storage';
 import { useCompany } from '../../context/CompanyContext';
 import { useConfig } from '../../context/ConfigContext';
 import { clearAcordosAccessSession } from '../../modules/acordosComerciais/components/AcordoAccessGate';
+import { Tooltip } from '../ui/Tooltip';
 
 const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,18 +45,25 @@ const UserMenu = () => {
 
   return (
     <div className="flex items-center space-x-2">
-      <button className="p-2 hover:bg-gray-100 rounded-full">
-        <HelpCircle className="w-[18px] h-[18px] text-gray-600" />
-      </button>
-      <button className="p-2 hover:bg-gray-100 rounded-full">
-        <Bell className="w-[18px] h-[18px] text-gray-600" />
-      </button>
+      <Tooltip content="Ajuda" position="bottom">
+        <button className="p-2 hover:bg-gray-100 rounded-full" aria-label="Ajuda">
+          <HelpCircle className="w-[18px] h-[18px] text-gray-600" />
+        </button>
+      </Tooltip>
+      <Tooltip content="Notificações" position="bottom">
+        <button className="p-2 hover:bg-gray-100 rounded-full" aria-label="Notificações">
+          <Bell className="w-[18px] h-[18px] text-gray-600" />
+        </button>
+      </Tooltip>
       <div className="relative inline-block text-left" ref={dropdownRef}>
-        <button 
+        <button
+          id="user-menu-button"
           className="p-1.5 hover:bg-gray-100 rounded-full ml-1 focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
           aria-haspopup="true"
+          aria-label="Menu do usuário"
+          title="Menu do usuário"
         >
           <div className="w-[26px] h-[26px] rounded-full bg-[#0070f2] flex items-center justify-center">
             <User className="w-4 h-4 text-white" />
@@ -79,6 +87,16 @@ const UserMenu = () => {
                 }}
               >
                 Meu perfil
+              </button>
+              <button
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                role="menuitem"
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate('/config/start?review=1');
+                }}
+              >
+                Rever tour de boas-vindas
               </button>
               <button
                 onClick={() => {

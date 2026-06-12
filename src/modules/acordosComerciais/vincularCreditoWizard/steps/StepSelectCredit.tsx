@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
-import { CheckCircle, Calendar, MagnifyingGlass } from '@phosphor-icons/react';
+import { CheckCircle2, Calendar, Search } from 'lucide-react';
 import { useVincularCreditoWizardStore } from '../store';
 import { StepCard, StepCardTitle, StepCardSubtitle } from '../styles';
 
@@ -43,7 +43,7 @@ export function StepSelectCredit() {
           </StepCardSubtitle>
         </div>
         <div className="relative">
-          <MagnifyingGlass
+          <Search
             size={14}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
           />
@@ -98,7 +98,7 @@ export function StepSelectCredit() {
                   </div>
                   {isActive && (
                     <div className="w-5 h-5 rounded-full bg-[#0070f2] flex items-center justify-center flex-shrink-0">
-                      <CheckCircle size={12} weight="fill" className="text-white" />
+                      <CheckCircle2 size={12} className="text-white" />
                     </div>
                   )}
                 </div>

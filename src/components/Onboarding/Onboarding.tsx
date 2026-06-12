@@ -4,7 +4,8 @@ import IframeErrorBoundary from '../common/IframeErrorBoundary';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useCompany } from '../../context/CompanyContext';
 import { PROJECT_URLS, ROUTES } from '../../constants/routes';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { useConfig } from '../../context/ConfigContext';
 import { supabase } from '../../lib/supabase';
 import { validateIframeOrigin } from '../../utils';
@@ -12,6 +13,8 @@ import { validateIframeOrigin } from '../../utils';
 const Onboarding = () => {
   const { companyId } = useCompany();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isReviewMode = searchParams.get('review') === '1';
   const { setSetupReady } = useConfig();
   const { isLoading, hasError } = useIframeLoader({
     iframeSelector: '[data-iframe="onboarding"]'
@@ -28,6 +31,12 @@ const Onboarding = () => {
       }
       
       if (event.data?.type === 'SETUP_COMPLETED' && event.data?.success === true) {
+        // Em modo revisão o setup já foi concluído: não alterar setup_ready no banco
+        if (isReviewMode) {
+          navigate('/app/home');
+          return;
+        }
+
         console.log('Setup completed successfully, updating status...');
 
         // Atualizar o status no banco de dados
@@ -53,7 +62,7 @@ const Onboarding = () => {
 
     window.addEventListener('message', handleSetupMessage);
     return () => window.removeEventListener('message', handleSetupMessage);
-  }, [navigate, setSetupReady, companyId]);
+  }, [navigate, setSetupReady, companyId, isReviewMode]);
 
   if (!companyId) {
     return (
@@ -89,9 +98,20 @@ const Onboarding = () => {
     <IframeErrorBoundary>
       <div className="relative w-full h-full">
         {isLoading && <LoadingSpinner />}
+        {isReviewMode && (
+          <button
+            onClick={() => navigate('/app/home')}
+            className="fixed top-4 right-4 flex items-center gap-2 bg-white text-gray-700 text-sm font-medium px-4 py-2 rounded-full shadow-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+            style={{ zIndex: 10000 }}
+            aria-label="Sair da revisão do tour"
+          >
+            <X className="w-4 h-4" />
+            Voltar ao portal
+          </button>
+        )}
         <iframe
           data-iframe="onboarding"
-          src={`${PROJECT_URLS[ROUTES.SETUP]}?companyId=${companyId}`}
+          src={`${PROJECT_URLS[ROUTES.SETUP]}?companyId=${companyId}${isReviewMode ? '&review=1' : ''}`}
           className="fixed top-0 left-0 w-full h-full"
           style={{ 
             border: 'none',

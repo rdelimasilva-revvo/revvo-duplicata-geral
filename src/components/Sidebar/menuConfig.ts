@@ -2,10 +2,9 @@ import {
   BarChart3,
   CreditCard,
   Banknote,
-  ToggleLeft,
   Users,
   Cog,
-  CloudCog
+  Activity
 } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 
@@ -16,8 +15,11 @@ export const menuItems = [
     label: 'Recebíveis',
     route: ROUTES.RECEIVABLES,
     items: [
-      { label: 'Escrituração', route: ROUTES.RECEIVABLES },
+      { label: 'Início', route: ROUTES.RECEIVABLES_HOME },
+      { label: 'Notas Fiscais', route: ROUTES.RECEIVABLES_NOTAS_FISCAIS },
+      { label: 'Duplicatas', route: ROUTES.RECEIVABLES },
       { label: 'Controle de Liquidações', route: ROUTES.RECEIVABLES_LIQUIDATIONS },
+      { label: 'Automações', route: ROUTES.AUTOMACOES },
     ],
   },
   {
@@ -37,12 +39,8 @@ export const menuItems = [
           { label: 'Fornecedor', route: ROUTES.ACORDOS_COMERCIAIS_REVISAO_PROPOSTA },
         ],
       },
+      { label: 'Automações', route: ROUTES.AUTOMACOES },
     ],
-  },
-  {
-    icon: ToggleLeft,
-    label: 'Gestão de Opt-in',
-    route: ROUTES.OPT_IN_MANAGEMENT,
   },
   {
     icon: Users,
@@ -53,13 +51,10 @@ export const menuItems = [
       { label: 'Fornecedores', route: ROUTES.AGENTE_INTERMEDIADOR_FORNECEDORES },
       { label: 'Duplicatas', route: ROUTES.AGENTE_INTERMEDIADOR_DUPLICATAS },
       { label: 'Envio de contratos', route: ROUTES.AGENTE_INTERMEDIADOR_CONTRATOS },
+      { label: 'Agente de oneração', route: ROUTES.AGENTE_INTERMEDIADOR_ONERACAO },
     ],
   },
-  {
-    icon: CloudCog,
-    label: 'Automações',
-    route: ROUTES.AUTOMACOES,
-  },
+  { icon: Activity, label: 'Status integrações', route: ROUTES.INTEGRATIONS_STATUS },
 ] as const;
 
 export const footerMenuItems = [
@@ -70,8 +65,11 @@ export const footerMenuItems = [
     items: [
       { label: 'Concessão automática de crédito'},
       { label: 'Assinaturas'},
+      { label: 'Cadastro de sacados', route: ROUTES.RECEIVABLES_SACADOS },
+      { label: 'Opt-in', route: ROUTES.OPT_IN_MANAGEMENT },
       { label: 'Perfis e acessos', route: ROUTES.PROFILES_ACCESS },
       { label: 'Alertas e notificações'},
+      { label: 'Ocultar menus', route: ROUTES.MENU_VISIBILITY },
     ],
   },
 ] as const;

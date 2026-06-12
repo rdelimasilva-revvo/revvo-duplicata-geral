@@ -4,8 +4,8 @@ import { ptBR } from 'date-fns/locale';
 import {
   X, Building2, Calendar, FileText, TrendingUp,
   AlertTriangle, CheckCircle2, Clock, FileCheck, Loader2,
+  XCircle,
 } from 'lucide-react';
-import { Warning, XCircle } from '@phosphor-icons/react';
 import {
   CONTRACT_TYPE_LABEL,
   PIPELINE_CONFIG,
@@ -279,7 +279,7 @@ export function AgreementDrawer({ agreement, onClose, onChangeStatus, onOpenRevi
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-orange-300 text-orange-700 text-sm font-semibold rounded-lg hover:bg-orange-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title={contestTooltip}
             >
-              <Warning size={16} weight="bold" />
+              <AlertTriangle size={16} />
               {hasContested
                 ? 'Em conflito'
                 : isPendingNf
@@ -330,7 +330,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
         <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
-              <Warning size={20} weight="fill" />
+              <AlertTriangle size={20} />
             </div>
             <div>
               <h3 className="text-base font-semibold text-gray-900">Contestar acordo</h3>
@@ -347,7 +347,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
             aria-label="Fechar"
             disabled={submitting}
           >
-            <XCircle size={20} weight="fill" />
+            <XCircle size={20} />
           </button>
         </div>
 
@@ -405,7 +405,7 @@ function ContestModal({ onClose, onConfirm, submitting }: ContestModalProps) {
               </>
             ) : (
               <>
-                <Warning size={16} weight="bold" />
+                <AlertTriangle size={16} />
                 Registrar contestação
               </>
             )}

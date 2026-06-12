@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Scales, PencilSimple, Trash, ShieldCheck, ClockCounterClockwise, FileText, Buildings, Warning } from '@phosphor-icons/react';
+import { X, Scale, Pencil, Trash2, ShieldCheck, History, FileText, Building2, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import { formatCurrency, formatDate } from '../utils';
@@ -240,12 +240,12 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
             aria-label="Fechar"
             className="absolute top-4 right-4 inline-flex items-center justify-center w-9 h-9 rounded-full text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
           >
-            <X size={20} weight="regular" />
+            <X size={20} />
           </button>
 
           <div className="flex items-start gap-3 pr-12">
             <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center flex-shrink-0">
-              <Buildings size={22} weight="regular" />
+              <Building2 size={22} />
             </div>
             <div className="min-w-0">
               <h2 className="text-xl font-bold text-slate-900 leading-tight truncate">
@@ -256,7 +256,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
               )}
               <div className="flex items-center gap-2 mt-3">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-800 border border-orange-200">
-                  <Warning size={12} weight="fill" />
+                  <AlertTriangle size={12} />
                   Em Conflito
                 </span>
                 <span className="text-[11px] text-slate-500">
@@ -270,7 +270,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
           <section>
             <div className="flex items-center gap-2 mb-3">
-              <Scales size={16} weight="regular" className="text-slate-500" />
+              <Scale size={16} className="text-slate-500" />
               <h3 className="text-sm font-bold text-slate-900">Comparação da disputa</h3>
             </div>
 
@@ -312,7 +312,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
                 aria-label="Fechar ajuste de valor"
                 className="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full text-slate-500 hover:text-slate-900 hover:bg-white transition-colors disabled:opacity-50"
               >
-                <X size={14} weight="regular" />
+                <X size={14} />
               </button>
               <label className="block text-xs font-semibold text-slate-700 mb-2 pr-8">
                 Novo valor acordado
@@ -353,7 +353,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
                 aria-label="Fechar justificativa"
                 className="absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 rounded-full text-slate-500 hover:text-slate-900 hover:bg-white transition-colors disabled:opacity-50"
               >
-                <X size={14} weight="regular" />
+                <X size={14} />
               </button>
               <label className="block text-xs font-semibold text-slate-700 mb-2 pr-8">
                 Justificativa para manter o valor original
@@ -383,7 +383,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
 
           <section>
             <div className="flex items-center gap-2 mb-3">
-              <ClockCounterClockwise size={16} weight="regular" className="text-slate-500" />
+              <History size={16} className="text-slate-500" />
               <h3 className="text-sm font-bold text-slate-900">Histórico e auditoria</h3>
             </div>
             <ol className="relative border-l border-slate-200 pl-5 space-y-4">
@@ -431,7 +431,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
                 onClick={() => setMode('adjust')}
                 className="inline-flex items-center justify-center gap-2 h-10 px-3 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
               >
-                <PencilSimple size={14} weight="regular" />
+                <Pencil size={14} />
                 Ajustar Valor
               </button>
               <button
@@ -440,7 +440,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
                 disabled={submitting}
                 className="inline-flex items-center justify-center gap-2 h-10 px-3 rounded-lg text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors disabled:opacity-50"
               >
-                <Trash size={14} weight="regular" />
+                <Trash2 size={14} />
                 Remover do Acordo
               </button>
               <button
@@ -448,7 +448,7 @@ export function ConflictResolutionDrawer({ target, onClose, onResolved }: Confli
                 onClick={() => setMode('keep')}
                 className="inline-flex items-center justify-center gap-2 h-10 px-3 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors"
               >
-                <ShieldCheck size={14} weight="regular" />
+                <ShieldCheck size={14} />
                 Manter Original
               </button>
             </div>

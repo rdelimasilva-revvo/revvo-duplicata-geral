@@ -4,13 +4,14 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { FilterAccordion } from '../ui/FilterAccordion';
 import {
-  Bank,
-  CheckCircle,
-  Warning,
+  Landmark,
+  CheckCircle2,
+  AlertTriangle,
   XCircle,
-  PencilSimple,
-  Trash
-} from '@phosphor-icons/react';
+  Pencil,
+  Trash2,
+  Search
+} from 'lucide-react';
 
 interface OptIn {
   id: string;
@@ -105,7 +106,7 @@ export const GestaoOptIn: React.FC = () => {
           <h1 className="text-2xl font-bold text-[#1F2937]">Gestão de Opt-in</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie as adesões com bancos e financiadores</p>
         </div>
-        <Button variant="primary" icon={<Bank size={14} weight="bold" />}>
+        <Button variant="primary" icon={<Landmark size={14} />}>
           Nova Adesão
         </Button>
       </div>
@@ -114,7 +115,7 @@ export const GestaoOptIn: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-blue-50 to-white border border-blue-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-blue-600 uppercase">Total</p>
-            <Bank size={20} weight="bold" className="text-blue-500" />
+            <Landmark size={20} className="text-blue-500" />
           </div>
           <p className="text-3xl font-bold text-blue-700">{totalOptIns}</p>
           <p className="text-xs text-blue-600 mt-1">Opt-ins cadastrados</p>
@@ -123,7 +124,7 @@ export const GestaoOptIn: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-cyan-50 to-white border border-cyan-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-cyan-600 uppercase">Ativos</p>
-            <CheckCircle size={20} weight="bold" className="text-cyan-500" />
+            <CheckCircle2 size={20} className="text-cyan-500" />
           </div>
           <p className="text-3xl font-bold text-cyan-700">{ativos}</p>
           <p className="text-xs text-cyan-600 mt-1">Em vigência</p>
@@ -132,7 +133,7 @@ export const GestaoOptIn: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-yellow-600 uppercase">Vencendo</p>
-            <Warning size={20} weight="bold" className="text-yellow-500" />
+            <AlertTriangle size={20} className="text-yellow-500" />
           </div>
           <p className="text-3xl font-bold text-yellow-700">{vencendo}</p>
           <p className="text-xs text-yellow-600 mt-1">Próximos 90 dias</p>
@@ -141,7 +142,7 @@ export const GestaoOptIn: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-red-50 to-white border border-red-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-red-600 uppercase">Vencidos</p>
-            <XCircle size={20} weight="bold" className="text-red-500" />
+            <XCircle size={20} className="text-red-500" />
           </div>
           <p className="text-3xl font-bold text-red-700">{vencidos}</p>
           <p className="text-xs text-red-600 mt-1">Requer renovação</p>
@@ -201,6 +202,17 @@ export const GestaoOptIn: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
+              {mockOptIns.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <Search size={32} className="text-gray-300 mb-3" />
+                      <p className="text-sm font-medium text-gray-500">Nenhum registro encontrado</p>
+                      <p className="text-xs text-gray-400 mt-1">Ajuste os filtros ou cadastre uma nova adesão.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {mockOptIns.map((opt) => (
                 <tr key={opt.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium text-gray-900">{opt.banco}</td>
@@ -220,10 +232,10 @@ export const GestaoOptIn: React.FC = () => {
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button className="text-blue-600 hover:text-blue-800 transition-colors">
-                        <PencilSimple size={16} weight="bold" />
+                        <Pencil size={16} />
                       </button>
                       <button className="text-red-600 hover:text-red-800 transition-colors">
-                        <Trash size={16} weight="bold" />
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </td>

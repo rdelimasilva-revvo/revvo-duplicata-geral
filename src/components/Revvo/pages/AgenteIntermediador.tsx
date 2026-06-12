@@ -4,11 +4,11 @@ import { FilterAccordion } from '../ui/FilterAccordion';
 import {
   Users,
   UserPlus,
-  CheckCircle,
+  CheckCircle2,
   Ticket,
   Clock,
-  TrendUp
-} from '@phosphor-icons/react';
+  TrendingUp
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const monthlyData = [
@@ -46,7 +46,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-blue-50 to-white border border-blue-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-blue-600 uppercase">Total Fornecedores</p>
-            <Users size={20} weight="bold" className="text-blue-500" />
+            <Users size={20} className="text-blue-500" />
           </div>
           <p className="text-3xl font-bold text-blue-700">248</p>
           <div className="flex items-center gap-1 mt-2">
@@ -58,7 +58,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-green-50 to-white border border-green-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-green-600 uppercase">Fornecedores Ativos</p>
-            <CheckCircle size={20} weight="bold" className="text-green-500" />
+            <CheckCircle2 size={20} className="text-green-500" />
           </div>
           <p className="text-3xl font-bold text-green-700">231</p>
           <div className="flex items-center gap-1 mt-2">
@@ -70,7 +70,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-purple-50 to-white border border-purple-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-purple-600 uppercase">Novos Este Mês</p>
-            <UserPlus size={20} weight="bold" className="text-purple-500" />
+            <UserPlus size={20} className="text-purple-500" />
           </div>
           <p className="text-3xl font-bold text-purple-700">17</p>
           <div className="flex items-center gap-1 mt-2">
@@ -83,7 +83,7 @@ export const AgenteIntermediador: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card className="p-6">
           <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendUp size={18} weight="bold" className="text-[#0066FF]" />
+            <TrendingUp size={18} className="text-[#0066FF]" />
             Top 5 Fornecedores
           </h3>
           <div className="space-y-3">
@@ -131,7 +131,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-cyan-50 to-white border border-cyan-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-cyan-600 uppercase">Total de Tickets</p>
-            <Ticket size={18} weight="bold" className="text-cyan-500" />
+            <Ticket size={18} className="text-cyan-500" />
           </div>
           <p className="text-2xl font-bold text-cyan-700">1.847</p>
           <p className="text-xs text-cyan-600 mt-1">No último mês</p>
@@ -140,7 +140,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-green-50 to-white border border-green-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-green-600 uppercase">Tickets Aprovados</p>
-            <CheckCircle size={18} weight="bold" className="text-green-500" />
+            <CheckCircle2 size={18} className="text-green-500" />
           </div>
           <p className="text-2xl font-bold text-green-700">1.623</p>
           <p className="text-xs text-green-600 mt-1">Taxa: 87.9%</p>
@@ -149,7 +149,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-yellow-50 to-white border border-yellow-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-yellow-600 uppercase">Em Processamento</p>
-            <Clock size={18} weight="bold" className="text-yellow-500" />
+            <Clock size={18} className="text-yellow-500" />
           </div>
           <p className="text-2xl font-bold text-yellow-700">156</p>
           <p className="text-xs text-yellow-600 mt-1">Aguardando</p>
@@ -158,7 +158,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-red-50 to-white border border-red-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-red-600 uppercase">Tickets Rejeitados</p>
-            <Ticket size={18} weight="bold" className="text-red-500" />
+            <Ticket size={18} className="text-red-500" />
           </div>
           <p className="text-2xl font-bold text-red-700">68</p>
           <p className="text-xs text-red-600 mt-1">Taxa: 3.7%</p>
@@ -173,7 +173,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-blue-50 to-white border border-blue-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-blue-600 uppercase">Prazo Médio</p>
-            <Clock size={18} weight="bold" className="text-blue-500" />
+            <Clock size={18} className="text-blue-500" />
           </div>
           <p className="text-2xl font-bold text-blue-700">2.4 dias</p>
           <p className="text-xs text-blue-600 mt-1">Para aprovação</p>
@@ -182,7 +182,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-green-50 to-white border border-green-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-green-600 uppercase">Dentro do Prazo</p>
-            <CheckCircle size={18} weight="bold" className="text-green-500" />
+            <CheckCircle2 size={18} className="text-green-500" />
           </div>
           <p className="text-2xl font-bold text-green-700">94.2%</p>
           <p className="text-xs text-green-600 mt-1">Conformidade</p>
@@ -191,7 +191,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-orange-50 to-white border border-orange-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-orange-600 uppercase">Próximos ao Prazo</p>
-            <Clock size={18} weight="bold" className="text-orange-500" />
+            <Clock size={18} className="text-orange-500" />
           </div>
           <p className="text-2xl font-bold text-orange-700">23</p>
           <p className="text-xs text-orange-600 mt-1">Vencem em 24h</p>
@@ -200,7 +200,7 @@ export const AgenteIntermediador: React.FC = () => {
         <Card className="p-4 bg-gradient-to-br from-red-50 to-white border border-red-100">
           <div className="flex items-start justify-between mb-2">
             <p className="text-xs font-medium text-red-600 uppercase">Fora do Prazo</p>
-            <Clock size={18} weight="bold" className="text-red-500" />
+            <Clock size={18} className="text-red-500" />
           </div>
           <p className="text-2xl font-bold text-red-700">8</p>
           <p className="text-xs text-red-600 mt-1">Requer atenção</p>

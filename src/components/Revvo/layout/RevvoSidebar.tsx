@@ -4,10 +4,10 @@ import {
   FileText,
   UserPlus,
   Handshake,
-  Bank,
-  ChartBar,
-  Gear
-} from '@phosphor-icons/react';
+  Landmark,
+  BarChart3,
+  Settings
+} from 'lucide-react';
 
 interface MenuItem {
   path: string;
@@ -19,27 +19,27 @@ const menuItems: MenuItem[] = [
   {
     path: '/revvo/notificacoes-duplicatas',
     label: 'Notificações de Duplicatas',
-    icon: <FileText size={18} weight="bold" />
+    icon: <FileText size={18} />
   },
   {
     path: '/revvo/novos-recebedores',
     label: 'Novos Recebedores',
-    icon: <UserPlus size={18} weight="bold" />
+    icon: <UserPlus size={18} />
   },
   {
     path: '/revvo/gestao-optin',
     label: 'Gestão de Opt-in',
-    icon: <Handshake size={18} weight="bold" />
+    icon: <Handshake size={18} />
   },
   {
     path: '/revvo/gestao-domicilio',
     label: 'Gestão de Domicílio Certo',
-    icon: <Bank size={18} weight="bold" />
+    icon: <Landmark size={18} />
   },
   {
     path: '/revvo/agente-intermediador',
     label: 'Parceiro de Escrituração',
-    icon: <ChartBar size={18} weight="bold" />
+    icon: <BarChart3 size={18} />
   }
 ];
 
@@ -72,7 +72,7 @@ export const RevvoSidebar: React.FC = () => {
 
       <div className="p-4 border-t border-gray-200">
         <button className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded w-full">
-          <Gear size={18} weight="bold" />
+          <Settings size={18} />
           <span>Configurações</span>
         </button>
       </div>

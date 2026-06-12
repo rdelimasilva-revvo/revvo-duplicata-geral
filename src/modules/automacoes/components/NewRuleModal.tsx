@@ -2,7 +2,68 @@ import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { supabase } from '@/modules/automacoes/lib/supabase';
 import { useStore } from '@/modules/automacoes/store/useStore';
-import { mockRuleTypes } from '@/modules/automacoes/lib/mockData';
+import { mockRuleTypes, mockSuppliers, mockCustomers } from '@/modules/automacoes/lib/mockData';
+import { RuleCriteria } from '@/modules/automacoes/components/RuleCriteria';
+
+interface PartyItem {
+  id: string;
+  name: string | null;
+  doc_num?: string | null;
+}
+
+/** Critérios de escrituração editáveis no modal (subconjunto da regra). */
+interface CriteriaState {
+  supplier: string[];
+  customer: string[];
+  value_ini: number | null;
+  value_end: number | null;
+  days_until_due_date_ini: number | null;
+  days_until_due_date_end: number | null;
+  issue_date_mode: 'range' | 'relative' | null;
+  issue_date_ini: string | null;
+  issue_date_end: string | null;
+  issue_date_rel_days: number | null;
+  due_date_mode: 'range' | 'relative' | null;
+  due_date_ini: string | null;
+  due_date_end: string | null;
+  due_date_rel_days: number | null;
+  value_divergence_pct: number | null;
+  value_divergence_abs: number | null;
+}
+
+const EMPTY_CRITERIA: CriteriaState = {
+  supplier: [],
+  customer: [],
+  value_ini: null,
+  value_end: null,
+  days_until_due_date_ini: null,
+  days_until_due_date_end: null,
+  issue_date_mode: null,
+  issue_date_ini: null,
+  issue_date_end: null,
+  issue_date_rel_days: null,
+  due_date_mode: null,
+  due_date_ini: null,
+  due_date_end: null,
+  due_date_rel_days: null,
+  value_divergence_pct: null,
+  value_divergence_abs: null,
+};
+
+function hasAnyCriterio(c: CriteriaState): boolean {
+  return (
+    c.supplier.length > 0 ||
+    c.customer.length > 0 ||
+    (c.value_ini ?? 0) > 0 ||
+    (c.value_end ?? 0) > 0 ||
+    c.days_until_due_date_ini != null ||
+    c.days_until_due_date_end != null ||
+    c.issue_date_mode != null ||
+    c.due_date_mode != null ||
+    (c.value_divergence_pct ?? 0) > 0 ||
+    (c.value_divergence_abs ?? 0) > 0
+  );
+}
 
 interface Company {
   id: string;
@@ -51,14 +112,39 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
   const [channelId, setChannelId] = useState<number | null>(null);
 
   const [ruleTypes, setRuleTypes] = useState<RuleType[]>([]);
+  const [emitters, setEmitters] = useState<PartyItem[]>([]);
+  const [clients, setClients] = useState<PartyItem[]>([]);
+  const [criteria, setCriteria] = useState<CriteriaState>(EMPTY_CRITERIA);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const selectedType = ruleTypes.find((t) => t.id === ruleTypeId);
+  const selectedTypeName = (selectedType?.name || '').toLowerCase();
+  const isEscrituracao = selectedTypeName.includes('escritur');
+  const isManifestacao = selectedTypeName.includes('manifest');
+  const usesCriteria = isEscrituracao || isManifestacao;
+  const criteriaContext = isManifestacao ? 'manifestacao' : 'escrituracao';
 
   useEffect(() => {
     if (isOpen) {
       loadRuleTypes();
+      loadParties();
     }
   }, [isOpen]);
+
+  async function loadParties() {
+    try {
+      const [{ data: sup }, { data: cus }] = await Promise.all([
+        supabase.from('supplier').select('*'),
+        supabase.from('customer').select('*'),
+      ]);
+      setEmitters((sup?.length ? sup : mockSuppliers) as PartyItem[]);
+      setClients((cus?.length ? cus : mockCustomers) as PartyItem[]);
+    } catch {
+      setEmitters(mockSuppliers as PartyItem[]);
+      setClients(mockCustomers as PartyItem[]);
+    }
+  }
 
   async function loadRuleTypes() {
     const fallback: RuleType[] = mockRuleTypes.map(({ id, name }) => ({ id, name }));
@@ -111,11 +197,17 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
         throw new Error('O tipo de regra é obrigatório');
       }
 
-      const ruleData = {
+      if (usesCriteria && !hasAnyCriterio(criteria)) {
+        throw new Error(`Defina pelo menos um critério de ${isManifestacao ? 'manifestação' : 'escrituração'}`);
+      }
+
+      const ruleData: Record<string, unknown> = {
         name: name.trim(),
         description: description.trim() || null,
         active,
         rule_type_id: ruleTypeId,
+        asset_origin_id: assetOriginId,
+        bkpg_channel_id: channelId,
         company_id: companyId,
         days_since_creation: 0,
         value_ini: 0,
@@ -123,6 +215,10 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
+
+      if (usesCriteria) {
+        Object.assign(ruleData, criteria);
+      }
 
       const { error } = await supabase
         .from('rules')
@@ -148,6 +244,7 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
     setRuleTypeId(null);
     setAssetOriginId(2);
     setChannelId(null);
+    setCriteria(EMPTY_CRITERIA);
     setError(null);
     onClose();
   };
@@ -156,7 +253,7 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <h2 className="text-2xl font-semibold text-[#1A1A1A]">Nova Regra</h2>
           <button
@@ -302,6 +399,18 @@ export function NewRuleModal({ isOpen, onClose, onSuccess }: NewRuleModalProps) 
                 </select>
               </div>
             </div>
+
+            {usesCriteria && (
+              <div className="border-t border-gray-200 pt-6">
+                <RuleCriteria
+                  context={criteriaContext}
+                  rule={criteria as any}
+                  onPatch={(patch) => setCriteria((prev) => ({ ...prev, ...patch }))}
+                  emitters={emitters}
+                  clients={clients}
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">

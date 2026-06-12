@@ -131,14 +131,17 @@ export const mockBanks = [
 ];
 
 export const mockCustomers = [
-  { id: 'CUST1', name: 'Cliente 1', company_id: 1, created_at: '', updated_at: '' },
-  { id: 'CUST2', name: 'Cliente 2', company_id: 2, created_at: '', updated_at: '' },
+  { id: 'CUST1', name: 'Petrobras Distribuidora S.A.', doc_num: '34.274.233/0001-02', company_id: 1, created_at: '', updated_at: '' },
+  { id: 'CUST2', name: 'Vale S.A.', doc_num: '33.592.510/0001-54', company_id: 2, created_at: '', updated_at: '' },
+  { id: 'CUST3', name: 'Ambev S.A.', doc_num: '07.526.557/0001-00', company_id: 1, created_at: '', updated_at: '' },
+  { id: 'CUST4', name: 'Magazine Luiza S.A.', doc_num: '47.960.950/0001-21', company_id: 1, created_at: '', updated_at: '' },
 ];
 
 export const mockSuppliers = [
-  { id: '1', name: 'ELO Tecnologia', company_id: 1, created_at: '', updated_at: '' },
-  { id: '2', name: 'Fornecedor ABC', company_id: 1, created_at: '', updated_at: '' },
-  { id: '3', name: 'SOW', company_id: 1, created_at: '', updated_at: '' },
+  { id: '1', name: 'ELO Tecnologia', doc_num: '12.345.678/0001-90', company_id: 1, created_at: '', updated_at: '' },
+  { id: '2', name: 'Fornecedor ABC', doc_num: '98.765.432/0001-10', company_id: 1, created_at: '', updated_at: '' },
+  { id: '3', name: 'SOW', doc_num: '11.222.333/0001-44', company_id: 1, created_at: '', updated_at: '' },
+  { id: '4', name: 'Cimentos Nacional Ltda', doc_num: '45.987.123/0001-67', company_id: 1, created_at: '', updated_at: '' },
 ];
 
 export function createDefaultRule(
@@ -173,5 +176,15 @@ export function createDefaultRule(
     output_channel_id: outputChannels[0]?.id || null,
     bank_id: [banks[0]?.id || 0],
     partner_type: null,
+    issue_date_mode: null,
+    issue_date_ini: null,
+    issue_date_end: null,
+    issue_date_rel_days: null,
+    due_date_mode: null,
+    due_date_ini: null,
+    due_date_end: null,
+    due_date_rel_days: null,
+    value_divergence_pct: null,
+    value_divergence_abs: null,
   };
 }

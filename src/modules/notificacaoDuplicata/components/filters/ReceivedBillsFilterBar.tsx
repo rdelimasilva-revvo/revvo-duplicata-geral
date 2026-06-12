@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Search, X, Calendar, Clock, ChevronDown } from 'lucide-react';
-import { FunnelSimple } from '@phosphor-icons/react';
+import { Search, X, Calendar, Clock, ChevronDown, Filter } from 'lucide-react';
 
 export interface ReceivedBillsFilters {
   search: string;
@@ -55,7 +54,7 @@ export function ReceivedBillsFilterBar({ onFilterChange }: ReceivedBillsFilterBa
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3">
-          <FunnelSimple className="w-5 h-5 text-gray-600" weight="regular" />
+          <Filter className="w-5 h-5 text-gray-600" />
           <span className="text-sm font-semibold text-gray-800">Filtros</span>
           {activeFilterCount > 0 && (
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-[10px] font-bold text-white">

@@ -1,18 +1,18 @@
 import { useEffect, useMemo } from 'react';
 import {
-  MagnifyingGlass,
+  Search,
   Eye,
-  DownloadSimple,
+  Download,
   X as XIcon,
   Receipt,
-  CheckCircle,
-  Warning,
-  Buildings,
-  Bank,
+  CheckCircle2,
+  AlertTriangle,
+  Building2,
+  Landmark,
   Clock,
   FileText,
   ShieldCheck,
-} from '@phosphor-icons/react';
+} from 'lucide-react';
 import { useSupplierPortalStore } from './store';
 import type { PaymentStatus, SupplierPayment } from './types';
 
@@ -137,7 +137,7 @@ export default function SupplierPortalPage() {
         <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 py-3 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
-              <ShieldCheck size={18} weight="fill" />
+              <ShieldCheck size={18} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
@@ -151,9 +151,8 @@ export default function SupplierPortalPage() {
 
           <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
             <label className="relative flex-1 min-w-0">
-              <MagnifyingGlass
+              <Search
                 size={14}
-                weight="bold"
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
@@ -195,21 +194,21 @@ export default function SupplierPortalPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <StatCard
-              icon={<Receipt size={16} weight="fill" />}
+              icon={<Receipt size={16} />}
               tone="sky"
               label="Total a Receber"
               value={formatCurrency(stats.totalReceivable)}
               hint={`${payments.length - stats.settledCount} faturas abertas`}
             />
             <StatCard
-              icon={<CheckCircle size={16} weight="fill" />}
+              icon={<CheckCircle2 size={16} />}
               tone="emerald"
               label="Pagamentos Concluídos"
               value={formatCurrency(stats.settledTotal)}
               hint={`${stats.settledCount} liquidadas`}
             />
             <StatCard
-              icon={<Warning size={16} weight="fill" />}
+              icon={<AlertTriangle size={16} />}
               tone="amber"
               label="Ações Necessárias"
               value={String(stats.actionsNeeded)}
@@ -354,7 +353,7 @@ function DesktopRow({ p, onOpen }: { p: SupplierPayment; onOpen: () => void }) {
     >
       <td className="px-3 py-2.5 align-middle">
         <div className="flex items-center gap-2">
-          <FileText size={14} className="text-slate-400" weight="regular" />
+          <FileText size={14} className="text-slate-400" />
           <span className="font-semibold text-slate-900 tabular-nums text-[13px]">
             {p.invoiceNumber}
           </span>
@@ -399,7 +398,7 @@ function DesktopRow({ p, onOpen }: { p: SupplierPayment; onOpen: () => void }) {
               onOpen();
             }}
           >
-            <Eye size={14} weight="bold" />
+            <Eye size={14} />
           </IconAction>
           <IconAction
             label="Baixar comprovante"
@@ -408,7 +407,7 @@ function DesktopRow({ p, onOpen }: { p: SupplierPayment; onOpen: () => void }) {
               e.stopPropagation();
             }}
           >
-            <DownloadSimple size={14} weight="bold" />
+            <Download size={14} />
           </IconAction>
         </div>
       </td>
@@ -522,37 +521,37 @@ function DetailsDrawer({
                 aria-label="Fechar detalhes"
                 className="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors"
               >
-                <XIcon size={16} weight="bold" />
+                <XIcon size={16} />
               </button>
             </header>
 
             <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 space-y-5">
               <section className="grid grid-cols-2 gap-2">
                 <InfoTile
-                  icon={<Receipt size={14} weight="fill" />}
+                  icon={<Receipt size={14} />}
                   label="Valor líquido"
                   value={formatCurrency(payment.netValue)}
                 />
                 <InfoTile
-                  icon={<Clock size={14} weight="fill" />}
+                  icon={<Clock size={14} />}
                   label="Vencimento"
                   value={formatDate(payment.dueDate)}
                 />
                 <InfoTile
-                  icon={<Buildings size={14} weight="fill" />}
+                  icon={<Building2 size={14} />}
                   label="CNPJ Sacado"
                   value={formatCnpj(payment.companyCnpj)}
                   mono
                 />
                 <InfoTile
-                  icon={<CheckCircle size={14} weight="fill" />}
+                  icon={<CheckCircle2 size={14} />}
                   label="Liquidação"
                   value={formatDate(payment.settlementDate)}
                 />
               </section>
 
               <section>
-                <SectionTitle icon={<Bank size={13} weight="fill" />}>Domicílio bancário</SectionTitle>
+                <SectionTitle icon={<Landmark size={13} />}>Domicílio bancário</SectionTitle>
                 <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-700">
@@ -580,7 +579,7 @@ function DetailsDrawer({
               </section>
 
               <section>
-                <SectionTitle icon={<Clock size={13} weight="fill" />}>
+                <SectionTitle icon={<Clock size={13} />}>
                   Timeline de liquidação
                 </SectionTitle>
                 {payment.timeline.length === 0 ? (
@@ -601,14 +600,14 @@ function DetailsDrawer({
               </section>
 
               <section>
-                <SectionTitle icon={<ShieldCheck size={13} weight="fill" />}>
+                <SectionTitle icon={<ShieldCheck size={13} />}>
                   Logs CERC
                 </SectionTitle>
                 <RegistrarList entries={payment.cercLog} empty="Sem registros CERC." />
               </section>
 
               <section>
-                <SectionTitle icon={<ShieldCheck size={13} weight="fill" />}>
+                <SectionTitle icon={<ShieldCheck size={13} />}>
                   Logs TAG
                 </SectionTitle>
                 <RegistrarList entries={payment.tagLog} empty="Sem registros TAG." />
@@ -628,7 +627,7 @@ function DetailsDrawer({
               <span className="text-[10px] text-slate-400">
                 Feche pelo ícone
                 <span className="mx-1 inline-flex items-center justify-center w-4 h-4 rounded-sm bg-slate-100">
-                  <XIcon size={10} weight="bold" />
+                  <XIcon size={10} />
                 </span>
                 no topo.
               </span>
@@ -637,7 +636,7 @@ function DetailsDrawer({
                 disabled={payment.status !== 'settled'}
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-sky-600 hover:bg-sky-700 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-semibold transition-colors"
               >
-                <DownloadSimple size={13} weight="bold" />
+                <Download size={13} />
                 Comprovante
               </button>
             </footer>

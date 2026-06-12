@@ -10,8 +10,11 @@ import {
   ClipboardCheck,
   Zap,
   AlertCircle,
+  Loader2,
 } from 'lucide-react';
 import { Supplier } from './mockSuppliers';
+import { maskCurrencyInput } from '../../utils/formatters';
+import { useToast } from '../../context/ToastContext';
 
 const UF_LIST = [
   'AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -59,17 +62,6 @@ const todayBR = () => {
   return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
 };
 
-const formatCurrencyBRL = (raw: string) => {
-  const value = Number(raw);
-  if (Number.isNaN(value)) return raw;
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-};
-
 const STEPS = [
   { key: 'dados', label: 'Dados do Fornecedor', icon: Building2 },
   { key: 'clube', label: 'Condições do Clube', icon: Sliders },
@@ -83,9 +75,17 @@ interface Props {
 }
 
 const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
+  const { showToast } = useToast();
   const [stepIdx, setStepIdx] = useState(0);
   const [form, setForm] = useState<FormData>(initialForm);
   const [showErrors, setShowErrors] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [limiteMensalDisplay, setLimiteMensalDisplay] = useState(() =>
+    initialForm.limiteMensal
+      ? maskCurrencyInput(Number(initialForm.limiteMensal).toFixed(2)).display
+      : ''
+  );
 
   const stepKey = STEPS[stepIdx].key;
 
@@ -120,6 +120,18 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleLimiteMensalChange = (raw: string) => {
+    const digits = raw.replace(/\D/g, '');
+    if (!digits) {
+      update('limiteMensal', '');
+      setLimiteMensalDisplay('');
+      return;
+    }
+    const { numeric, display } = maskCurrencyInput(raw);
+    update('limiteMensal', String(numeric));
+    setLimiteMensalDisplay(display);
+  };
+
   const handleNext = () => {
     if (Object.keys(errors).length > 0) {
       setShowErrors(true);
@@ -134,7 +146,8 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
     setStepIdx((i) => Math.max(i - 1, 0));
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
+    if (submitting) return;
     const supplier: Supplier = {
       id: `sup-${Date.now()}`,
       name: form.name.trim(),
@@ -150,8 +163,25 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
       clubeAntecipacao: true,
       duplicates: [],
     };
-    onCreate(supplier);
-    onClose();
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      await Promise.resolve(onCreate(supplier));
+      showToast(
+        'success',
+        'Fornecedor cadastrado',
+        `${supplier.name} foi adicionado ao Clube de Antecipação.`
+      );
+      onClose();
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error && err.message
+          ? err.message
+          : 'Ocorreu um erro inesperado ao processar o cadastro.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -353,9 +383,11 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
                     Limite mensal (R$) <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="number"
-                    value={form.limiteMensal}
-                    onChange={(e) => update('limiteMensal', e.target.value)}
+                    type="text"
+                    inputMode="numeric"
+                    value={limiteMensalDisplay}
+                    onChange={(e) => handleLimiteMensalChange(e.target.value)}
+                    placeholder="R$ 0,00"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
                   />
                   {showErrors && errors.limiteMensal && (
@@ -466,7 +498,7 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
                 />
                 <ReviewRow
                   label="Limite mensal"
-                  value={formatCurrencyBRL(form.limiteMensal)}
+                  value={limiteMensalDisplay}
                 />
                 <ReviewRow
                   label="Prazo máximo"
@@ -482,6 +514,22 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
                   imediatamente na listagem.
                 </div>
               </div>
+
+              {submitError && (
+                <div
+                  className="p-4 rounded-lg bg-red-50 border border-red-200 flex gap-3"
+                  role="alert"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-xs text-red-900 leading-relaxed space-y-1">
+                    <div className="text-sm font-semibold text-red-800">
+                      Não foi possível cadastrar o fornecedor
+                    </div>
+                    <p>{submitError}</p>
+                    <p>Tente novamente; se persistir, contate o suporte.</p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -513,10 +561,15 @@ const NovoFornecedorWizard: React.FC<Props> = ({ onClose, onCreate }) => {
             ) : (
               <button
                 onClick={handleFinish}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={submitting}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Zap className="w-4 h-4" />
-                Cadastrar no Clube
+                {submitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Zap className="w-4 h-4" />
+                )}
+                {submitting ? 'Cadastrando...' : 'Cadastrar no Clube'}
               </button>
             )}
           </div>

@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { FileText, Shield, Sparkles, Loader2, FolderLock } from 'lucide-react';
-import {
-  DownloadSimple,
-  FileArchive,
-  FilePdf,
-  FileXls,
-  ClockCounterClockwise,
-  PencilSimple,
-} from '@phosphor-icons/react';
+import { FileText, Shield, Sparkles, Loader2, FolderLock, Download, FileArchive, FileSpreadsheet, History, Pencil } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import { useAuthStore, ROLE_LEVEL } from '@/store/authStore';
@@ -38,11 +30,11 @@ interface DocumentCenterProps {
 }
 
 const KIND_META: Record<DocKind, { label: string; icon: React.ComponentType<{ size?: number; weight?: 'regular' | 'fill' | 'bold' | 'duotone'; className?: string }>; color: string }> = {
-  contract: { label: 'Contrato', icon: FilePdf, color: 'text-red-600 bg-red-50 border-red-100' },
-  extrato: { label: 'Extrato', icon: FilePdf, color: 'text-blue-600 bg-blue-50 border-blue-100' },
-  nf: { label: 'Nota Fiscal', icon: FileXls, color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
-  audit_log: { label: 'Auditoria', icon: ClockCounterClockwise, color: 'text-slate-600 bg-slate-50 border-slate-200' },
-  draft: { label: 'Rascunho', icon: PencilSimple, color: 'text-amber-600 bg-amber-50 border-amber-100' },
+  contract: { label: 'Contrato', icon: FileText, color: 'text-red-600 bg-red-50 border-red-100' },
+  extrato: { label: 'Extrato', icon: FileText, color: 'text-blue-600 bg-blue-50 border-blue-100' },
+  nf: { label: 'Nota Fiscal', icon: FileSpreadsheet, color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
+  audit_log: { label: 'Auditoria', icon: History, color: 'text-slate-600 bg-slate-50 border-slate-200' },
+  draft: { label: 'Rascunho', icon: Pencil, color: 'text-amber-600 bg-amber-50 border-amber-100' },
   other: { label: 'Documento', icon: FileText as never, color: 'text-gray-600 bg-gray-50 border-gray-200' },
 };
 
@@ -329,7 +321,7 @@ export function DocumentCenter({
             {zipping ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
-              <FileArchive size={14} weight="bold" />
+              <FileArchive size={14} />
             )}
             Baixar Tudo
           </button>
@@ -377,7 +369,7 @@ export function DocumentCenter({
                 <div
                   className={`w-10 h-10 rounded-lg flex items-center justify-center border shrink-0 ${meta.color}`}
                 >
-                  <Icon size={18} weight="fill" />
+                  <Icon size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -415,7 +407,7 @@ export function DocumentCenter({
                   {isDownloading ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
-                    <DownloadSimple size={14} weight="bold" />
+                    <Download size={14} />
                   )}
                   Baixar
                 </button>

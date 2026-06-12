@@ -1,18 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   X as XIcon,
-  MagnifyingGlass,
-  CheckCircle,
-  CurrencyCircleDollar,
+  Search,
+  CheckCircle2,
+  CircleDollarSign,
   Ticket,
-  Buildings,
-  CalendarBlank,
+  Building2,
+  Calendar,
   FileText,
-  ChatCircleText,
-  Lightning,
+  MessageSquareText,
+  Zap,
   Receipt,
-  ArrowsClockwise,
-} from '@phosphor-icons/react';
+  RefreshCw,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 type RegistradoraId = 'cerc' | 'b3';
@@ -180,7 +180,7 @@ export default function AcordosComerciaisPortal() {
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
-          <CalendarBlank size={14} weight="bold" />
+          <Calendar size={14} />
           Sessão ativa · {new Date().toLocaleDateString('pt-BR')}
         </div>
       </header>
@@ -196,7 +196,7 @@ export default function AcordosComerciaisPortal() {
                 {MOCK_PROPOSAL.supplierName}
               </h2>
               <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
-                <FileText size={13} weight="bold" className="text-gray-400" />
+                <FileText size={13} className="text-gray-400" />
                 <span className="font-mono font-semibold text-gray-700">#{MOCK_PROPOSAL.code}</span>
                 <span className="text-gray-300">·</span>
                 <span>CNPJ {MOCK_PROPOSAL.supplierCnpj}</span>
@@ -219,9 +219,8 @@ export default function AcordosComerciaisPortal() {
                     </option>
                   ))}
                 </select>
-                <ArrowsClockwise
+                <RefreshCw
                   size={14}
-                  weight="bold"
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                 />
               </div>
@@ -230,7 +229,7 @@ export default function AcordosComerciaisPortal() {
 
             <div className="min-w-0 lg:border-l lg:border-gray-100 lg:pl-8">
               <div className="flex items-center gap-2 mb-1.5">
-                <ChatCircleText size={14} weight="bold" className="text-[#0A6ED1]" />
+                <MessageSquareText size={14} className="text-[#0A6ED1]" />
                 <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">
                   Justificativa
                 </p>
@@ -252,7 +251,7 @@ export default function AcordosComerciaisPortal() {
             caption="No período selecionado"
           />
           <PerformanceCard
-            icon={CheckCircle}
+            icon={CheckCircle2}
             label="NF Pagas"
             value={String(totalPaid)}
             caption={`${totalIssued ? Math.round((totalPaid / totalIssued) * 100) : 0}% do total`}
@@ -322,7 +321,7 @@ export default function AcordosComerciaisPortal() {
                       </td>
                       <td className="px-4 py-3.5 align-middle">
                         <div className="flex items-center gap-2 text-gray-700">
-                          <Buildings size={14} weight="bold" className="text-gray-400" />
+                          <Building2 size={14} className="text-gray-400" />
                           <span className="truncate max-w-[220px]">{inv.supplierOrigin}</span>
                         </div>
                       </td>
@@ -358,7 +357,7 @@ export default function AcordosComerciaisPortal() {
                           disabled={isPaid || balance === 0}
                           className="inline-flex items-center gap-1.5 px-3 h-8 text-xs font-semibold text-[#0A6ED1] bg-[#E8F2FD] hover:bg-[#D6E7FA] rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
-                          <Ticket size={13} weight="bold" />
+                          <Ticket size={13} />
                           Vincular
                         </button>
                       </td>
@@ -388,7 +387,7 @@ export default function AcordosComerciaisPortal() {
 }
 
 interface PerformanceCardProps {
-  icon: React.ComponentType<{ size?: number; weight?: 'regular' | 'fill' | 'bold' | 'duotone' }>;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
   value: string;
   caption: string;
@@ -411,7 +410,7 @@ function PerformanceCard({ icon: Icon, label, value, caption, tone = 'default' }
     <div className={`border rounded-lg shadow-sm p-5 ${toneClasses}`}>
       <div className="flex items-center gap-2 mb-2">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
-          <Icon size={16} weight="fill" />
+          <Icon size={16} />
         </div>
         <p className="text-[11px] uppercase tracking-wider font-semibold text-gray-500">{label}</p>
       </div>
@@ -530,7 +529,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="w-8 h-8 rounded-lg bg-[#E8F2FD] text-[#0A6ED1] flex items-center justify-center">
-                <Ticket size={18} weight="duotone" />
+                <Ticket size={18} />
               </div>
               <h3 className="text-base font-semibold text-gray-900">Vincular Crédito</h3>
             </div>
@@ -548,15 +547,14 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
             aria-label="Fechar"
             className="w-8 h-8 rounded-lg text-gray-400 hover:text-gray-900 hover:bg-gray-100 flex items-center justify-center transition-colors"
           >
-            <XIcon size={18} weight="bold" />
+            <XIcon size={18} />
           </button>
         </header>
 
         <div className="px-6 py-4 border-b border-gray-100">
           <div className="relative">
-            <MagnifyingGlass
+            <Search
               size={16}
-              weight="bold"
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
             />
             <input
@@ -602,7 +600,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
                         isSelected ? 'bg-[#0A6ED1] text-white' : 'bg-emerald-50 text-emerald-600'
                       }`}
                     >
-                      <CurrencyCircleDollar size={16} weight="fill" />
+                      <CircleDollarSign size={16} />
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold text-gray-900 truncate">{c.label}</div>
@@ -639,7 +637,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
                 onClick={handleLiquidateAll}
                 className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#0A6ED1] hover:text-[#0855A8]"
               >
-                <Lightning size={12} weight="fill" />
+                <Zap size={12} />
                 Liquidar Total ({formatCurrency(invoiceRemaining)})
               </button>
             )}
@@ -666,7 +664,7 @@ function VincularCreditoModal({ invoice, allocations, credits, onClose, onConfir
               disabled={!amountValid || submitting}
               className="h-11 px-5 inline-flex items-center gap-2 text-sm font-semibold text-white bg-[#0A6ED1] hover:bg-[#0855A8] rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              <CheckCircle size={16} weight="fill" />
+              <CheckCircle2 size={16} />
               Aplicar
             </button>
           </div>

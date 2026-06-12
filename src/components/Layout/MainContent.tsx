@@ -13,13 +13,17 @@ import Negotiation from '../Negotiation';
 import { AutomaticBookkeeping, Subscriptions, OptInManagement } from '../Settings';
 import { PaymentReport } from '../Settings';
 import { ProfilesAccess } from '../Settings';
+import { MenuVisibility } from '../Settings';
 import UserProfilePage from '@/pages/UserProfilePage';
 import Notifications from '../Notifications';
 import AgenteIntermediador from '../AgenteIntermediador/AgenteIntermediador';
 import Fornecedores from '../AgenteIntermediador/Fornecedores';
 import DuplicatasGeradas from '../AgenteIntermediador/DuplicatasGeradas';
 import EnvioContratos from '../AgenteIntermediador/EnvioContratos';
+import AgenteOneracao from '../AgenteIntermediador/AgenteOneracao';
 import ControleLiquidacoes from '../ControleLiquidacoes/ControleLiquidacoes';
+import CadastroSacados from '../CadastroSacados/CadastroSacados';
+import StatusIntegracoes from '../StatusIntegracoes/StatusIntegracoes';
 import FornecedorDivergente from '../FornecedorDivergente/FornecedorDivergente';
 import { NovosRecebedores } from '../Revvo/pages/NovosRecebedores';
 import {
@@ -58,6 +62,7 @@ const MainContent = ({ currentView, onNavigate }: MainContentProps) => {
         {(modulesRoutes.find(route => currentView === route.path) ?? modulesRoutes.find(route => currentView.startsWith(route.path + '/')))?.element}
         {currentView === ROUTES.RECEIVABLES_AUTOMATIONS && <AutomaticBookkeeping />}
         {currentView === ROUTES.RECEIVABLES_LIQUIDATIONS && <ControleLiquidacoes />}
+        {currentView === ROUTES.RECEIVABLES_SACADOS && <CadastroSacados />}
         {currentView === ROUTES.BANKS && <Banks />}
         {currentView === ROUTES.WARRANTIES && <Warranties />}
         {currentView === ROUTES.PAYABLES && <Payables />}
@@ -87,11 +92,14 @@ const MainContent = ({ currentView, onNavigate }: MainContentProps) => {
         {currentView === ROUTES.AGENTE_INTERMEDIADOR_FORNECEDORES && <Fornecedores />}
         {currentView === ROUTES.AGENTE_INTERMEDIADOR_DUPLICATAS && <DuplicatasGeradas />}
         {currentView === ROUTES.AGENTE_INTERMEDIADOR_CONTRATOS && <EnvioContratos />}
+        {currentView === ROUTES.AGENTE_INTERMEDIADOR_ONERACAO && <AgenteOneracao />}
         {currentView === ROUTES.FORNECEDOR_DIVERGENTE && <NovosRecebedores />}
         {currentView === ROUTES.FORNECEDOR_DIVERGENTE_LEGACY && <FornecedorDivergente />}
         {currentView === ROUTES.PAYMENT_REPORT && <PaymentReport />}
         {currentView === ROUTES.PROFILES_ACCESS && <ProfilesAccess />}
+        {currentView === ROUTES.MENU_VISIBILITY && <MenuVisibility />}
         {currentView === ROUTES.USER_PROFILE && <UserProfilePage />}
+        {currentView === ROUTES.INTEGRATIONS_STATUS && <StatusIntegracoes />}
       </div>
     </main>
   );

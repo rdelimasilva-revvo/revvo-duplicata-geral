@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FunnelSimple } from '@phosphor-icons/react';
+import { Filter } from 'lucide-react';
 
 interface FilterAccordionProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ export const FilterAccordion: React.FC<FilterAccordionProps> = ({ children }) =>
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-3 flex items-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
       >
-        <FunnelSimple size={16} weight="bold" />
+        <Filter size={16} />
         <span>Filtros</span>
         <span className="ml-auto text-gray-400">{isOpen ? '−' : '+'}</span>
       </button>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Search, MoreVertical, Power, Trash2, ArrowUpDown, Filter, AlertTriangle, RefreshCw } from 'lucide-react';
+import { PlusCircle, Search, MoreVertical, Power, Trash2, ArrowUpDown, Filter, AlertTriangle, RefreshCw, Zap } from 'lucide-react';
 import { supabase } from '@/modules/automacoes/lib/supabase';
 import { useStore } from '@/modules/automacoes/store/useStore';
 import { formatToBRL } from '@/modules/automacoes/utils/currencyUtils';
@@ -8,6 +8,7 @@ import { formatDate } from '@/modules/automacoes/utils/dateUtils';
 import { Notification } from '@/modules/automacoes/components/Notification';
 import { DeleteConfirmationModal } from '@/modules/automacoes/components/DeleteConfirmationModal';
 import { NewRuleModal } from '@/modules/automacoes/components/NewRuleModal';
+import { UndoToast } from '@/components/common/UndoToast';
 import { mockRules, mockRuleTypes } from '@/modules/automacoes/lib/mockData';
 import type { Database } from '@/modules/automacoes/lib/database.types';
 
@@ -42,6 +43,8 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
   } | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [ruleToDelete, setRuleToDelete] = useState<Rule | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deletedRule, setDeletedRule] = useState<Rule | null>(null);
   const [isNewRuleModalOpen, setIsNewRuleModalOpen] = useState(false);
   const navigate = useNavigate();
   const { companyId } = useStore();
@@ -125,8 +128,8 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
     }
   }
 
-  const handleToggleActive = async (rule: Rule, event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleToggleActive = async (rule: Rule, event?: React.SyntheticEvent) => {
+    event?.stopPropagation();
     try {
       if (!usingMockData) {
         const { error } = await supabase
@@ -169,9 +172,10 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
   };
 
   const handleConfirmDelete = async () => {
-    try {
-      if (!ruleToDelete) return;
+    if (!ruleToDelete) return;
 
+    setDeleting(true);
+    try {
       if (!usingMockData) {
         const { error } = await supabase
           .from('rules')
@@ -182,10 +186,7 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
       }
 
       setRules(prev => prev.filter(rule => rule.id !== ruleToDelete.id));
-      setNotification({
-        type: 'success',
-        message: 'Regra excluída com sucesso!'
-      });
+      setDeletedRule(ruleToDelete);
       setDeleteModalOpen(false);
       setRuleToDelete(null);
     } catch (err) {
@@ -193,6 +194,44 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
       setNotification({
         type: 'error',
         message: 'Erro ao excluir a regra'
+      });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleUndoDelete = async () => {
+    if (!deletedRule) return;
+
+    const ruleToRestore = deletedRule;
+    setDeletedRule(null);
+
+    try {
+      if (usingMockData) {
+        setRules(prev => sortRules([...prev, ruleToRestore], sortField, sortDirection));
+      } else {
+        // Re-insere a regra com os mesmos dados (o banco gera um novo id)
+        const { id: _id, ...ruleData } = ruleToRestore;
+        const { data, error } = await supabase
+          .from('rules')
+          .insert([ruleData])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setRules(prev => sortRules([...prev, (data ?? ruleToRestore) as Rule], sortField, sortDirection));
+      }
+
+      setNotification({
+        type: 'success',
+        message: 'Exclusão desfeita com sucesso!'
+      });
+    } catch (err) {
+      console.error('Error restoring rule:', err);
+      setNotification({
+        type: 'error',
+        message: 'Não foi possível desfazer a exclusão da regra.'
       });
     }
   };
@@ -240,7 +279,7 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
   });
 
   return (
-    <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-sm p-6">
+    <div className="w-full bg-white rounded-lg shadow-sm p-6">
       <DeleteConfirmationModal
         isOpen={deleteModalOpen}
         onClose={() => {
@@ -249,6 +288,7 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
         }}
         onConfirm={handleConfirmDelete}
         ruleName={ruleToDelete?.name || ''}
+        loading={deleting}
       />
       <NewRuleModal
         isOpen={isNewRuleModalOpen}
@@ -266,6 +306,15 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
           type={notification.type}
           message={notification.message}
           onClose={() => setNotification(null)}
+        />
+      )}
+
+      {deletedRule && (
+        <UndoToast
+          message={`Regra "${deletedRule.name}" excluída.`}
+          onUndo={handleUndoDelete}
+          onClose={() => setDeletedRule(null)}
+          duration={10000}
         />
       )}
 
@@ -399,13 +448,25 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
           {filteredRules.map((rule) => (
             <div
               key={rule.id}
-              className="bg-[#F5F6F7] rounded-lg border border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow flex flex-col min-h-[200px]"
+              className={`rounded-xl border cursor-pointer transition-all hover:shadow-md hover:border-blue-200 flex flex-col ${
+                rule.active ? 'bg-white border-gray-200' : 'bg-gray-50 border-gray-200'
+              }`}
               onClick={() => navigate(`${basePath}/rule/${rule.id}`)}
             >
-              <div className="flex-grow">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-medium text-primary">{rule.name}</h3>
-                  <div className="relative rule-menu">
+              <div className={`p-4 flex-grow flex flex-col ${rule.active ? '' : 'opacity-60'}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    rule.active ? 'bg-blue-50 text-[#0070F2]' : 'bg-gray-200 text-gray-500'
+                  }`}>
+                    <Zap size={18} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">
+                      {ruleTypes.find(type => type.id === rule.rule_type_id)?.name || 'Tipo não definido'}
+                    </p>
+                    <h3 className="font-semibold text-gray-900 leading-snug">{rule.name}</h3>
+                  </div>
+                  <div className="relative rule-menu -mt-1 -mr-1">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -437,31 +498,53 @@ export default function RulesList({ basePath = '/app/automacoes' }) {
                     )}
                   </div>
                 </div>
-                <div>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
-                    rule.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+
+                {rule.description && rule.description !== rule.name && (
+                  <p className="text-sm text-gray-500 line-clamp-2 mt-2">{rule.description}</p>
+                )}
+
+                <div className="mt-auto pt-3">
+                  <div className={`rounded-lg border border-gray-100 divide-y divide-gray-100 text-sm ${
+                    rule.active ? 'bg-gray-50' : 'bg-white/60'
                   }`}>
-                    {rule.active ? 'Ativa' : 'Inativa'}
-                  </span>
-                  <div className="mt-2">
-                    <span className="text-sm font-semibold text-secondary">
-                      {ruleTypes.find(type => type.id === rule.rule_type_id)?.name || 'Tipo não definido'}
-                    </span>
-                  </div>
-                  <p className="text-sm text-secondary mb-4">{rule.description}</p>
-                  <div className="text-sm text-secondary">
-                    <p>Dias desde criação: {rule.days_since_creation}</p>
-                    <p>Valor: {formatToBRL(rule.value_ini)} - {formatToBRL(rule.value_end)}</p>
+                    <div className="flex items-center justify-between gap-3 px-3 py-2">
+                      <span className="text-gray-500">Faixa de valor</span>
+                      <span className="font-medium text-gray-800 tabular-nums text-right">
+                        {formatToBRL(rule.value_ini)} – {formatToBRL(rule.value_end)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 px-3 py-2">
+                      <span className="text-gray-500">Dias desde criação</span>
+                      <span className="font-medium text-gray-800 tabular-nums">
+                        {rule.days_since_creation ?? 0} {(rule.days_since_creation ?? 0) === 1 ? 'dia' : 'dias'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-auto pt-2" onClick={(e) => e.stopPropagation()}>
-                <hr className="border-gray-200" />
-                <div className="flex justify-between mt-2 text-xs text-gray-500">
-                  <span>Data de criação: {formatDate(rule.created_at)}</span>
-                  <span>Data atualiz.: {formatDate(rule.updated_at)}</span>
-                </div>
+              <div
+                className="px-4 py-3 border-t border-gray-100 flex items-center justify-between"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <label
+                  className="relative inline-flex items-center gap-2 cursor-pointer"
+                  title={rule.active ? 'Inativar regra' : 'Ativar regra'}
+                >
+                  <input
+                    type="checkbox"
+                    checked={rule.active || false}
+                    onChange={() => handleToggleActive(rule)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-10 h-[22px] bg-[#D3D6DA] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-[18px] peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-[18px] after:w-[18px] after:transition-all peer-checked:bg-[#0070F2]" />
+                  <span className={`text-xs font-medium ${rule.active ? 'text-green-700' : 'text-gray-500'}`}>
+                    {rule.active ? 'Ativa' : 'Inativa'}
+                  </span>
+                </label>
+                <span className="text-xs text-gray-400" title={`Criada em ${formatDate(rule.created_at)}`}>
+                  Atualizada em {formatDate(rule.updated_at)}
+                </span>
               </div>
             </div>
           ))}

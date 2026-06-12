@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, Calendar, Building2, ToggleLeft, ToggleRight, Plus, Edit2, Trash2, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, Calendar, Building2, ToggleLeft, ToggleRight, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
+import { useActionFeedback } from '../../hooks/useActionFeedback';
 
 interface OptInRecord {
   id: string;
@@ -503,8 +504,8 @@ const OptInManagement = () => {
   const itemsPerPage = 10;
   const totalPages = Math.max(1, Math.ceil(optInRecords.length / itemsPerPage));
   const paginatedRecords = optInRecords.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { run, isRunning } = useActionFeedback();
+  const [pendingAction, setPendingAction] = useState<{ id: string; type: 'toggle' | 'delete' } | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [selectedTerms, setSelectedTerms] = useState<{ title: string; content: string } | null>(null);
@@ -524,19 +525,18 @@ const OptInManagement = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    try {
-      setIsLoading(true);
-      
+
+    const wasEditing = Boolean(editingRecord);
+    const result = await run(async () => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const now = new Date().toISOString();
-      
+
       if (editingRecord) {
         // Update existing record
-        setOptInRecords(prev => prev.map(record => 
-          record.id === editingRecord.id 
+        setOptInRecords(prev => prev.map(record =>
+          record.id === editingRecord.id
             ? {
                 ...record,
                 financiador: formData.financiador,
@@ -560,56 +560,62 @@ const OptInManagement = () => {
           created_at: now,
           updated_at: now
         };
-        
+
         setOptInRecords(prev => [newRecord, ...prev]);
       }
 
+      return true;
+    }, {
+      successTitle: wasEditing ? 'Opt-in atualizado' : 'Opt-in cadastrado',
+      successMessage: formData.financiador,
+      errorTitle: 'Erro ao salvar registro de opt-in'
+    });
+
+    if (result) {
       resetForm();
       setShowAddModal(false);
       setEditingRecord(null);
-    } catch (error) {
-      console.error('Error saving opt-in record:', error);
-      setError('Erro ao salvar registro de opt-in');
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleToggleActive = async (record: OptInRecord) => {
+    setPendingAction({ id: record.id, type: 'toggle' });
     try {
-      setIsLoading(true);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setOptInRecords(prev => prev.map(r => 
-        r.id === record.id 
-          ? { ...r, ativo: !r.ativo, updated_at: new Date().toISOString() }
-          : r
-      ));
-    } catch (error) {
-      console.error('Error toggling opt-in status:', error);
-      setError('Erro ao alterar status do opt-in');
+      await run(async () => {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        setOptInRecords(prev => prev.map(r =>
+          r.id === record.id
+            ? { ...r, ativo: !r.ativo, updated_at: new Date().toISOString() }
+            : r
+        ));
+      }, {
+        successTitle: record.ativo ? 'Opt-in desativado' : 'Opt-in ativado',
+        successMessage: record.financiador,
+        errorTitle: 'Erro ao alterar status do opt-in'
+      });
     } finally {
-      setIsLoading(false);
+      setPendingAction(null);
     }
   };
 
   const handleDelete = async (recordId: string) => {
     if (!confirm('Tem certeza que deseja excluir este registro?')) return;
 
+    setPendingAction({ id: recordId, type: 'delete' });
     try {
-      setIsLoading(true);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setOptInRecords(prev => prev.filter(record => record.id !== recordId));
-    } catch (error) {
-      console.error('Error deleting opt-in record:', error);
-      setError('Erro ao excluir registro de opt-in');
+      await run(async () => {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        setOptInRecords(prev => prev.filter(record => record.id !== recordId));
+      }, {
+        successTitle: 'Opt-in excluído',
+        errorTitle: 'Erro ao excluir registro de opt-in'
+      });
     } finally {
-      setIsLoading(false);
+      setPendingAction(null);
     }
   };
 
@@ -660,17 +666,9 @@ const OptInManagement = () => {
     return expirationDate < today;
   };
 
-  // Clear error after 5 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(null), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
-
   return (
     <div className="p-6 bg-white min-h-full">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -683,19 +681,13 @@ const OptInManagement = () => {
               setEditingRecord(null);
               setShowAddModal(true);
             }}
-            disabled={isLoading}
+            disabled={isRunning}
             className="flex items-center px-4 h-8 bg-revvo-blue text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Opt-in
           </button>
         </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">{error}</p>
-          </div>
-        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -813,10 +805,12 @@ const OptInManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => handleToggleActive(record)}
-                        disabled={isLoading}
+                        disabled={isRunning}
                         className="flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {record.ativo ? (
+                        {pendingAction?.id === record.id && pendingAction.type === 'toggle' ? (
+                          <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+                        ) : record.ativo ? (
                           <ToggleRight className="w-6 h-6 text-green-500 hover:text-green-600" />
                         ) : (
                           <ToggleLeft className="w-6 h-6 text-gray-400 hover:text-gray-500" />
@@ -832,17 +826,21 @@ const OptInManagement = () => {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => openEditModal(record)}
-                          disabled={isLoading}
+                          disabled={isRunning}
                           className="text-revvo-blue hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(record.id)}
-                          disabled={isLoading}
+                          disabled={isRunning}
                           className="text-red-600 hover:text-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          {pendingAction?.id === record.id && pendingAction.type === 'delete' ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
                         </button>
                       </div>
                     </td>
@@ -855,7 +853,7 @@ const OptInManagement = () => {
                 <button
                   className="h-8 px-3 border rounded-md text-sm"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={isLoading}
+                  disabled={isRunning}
                 >
                   Anterior
                 </button>
@@ -864,7 +862,7 @@ const OptInManagement = () => {
                 <button
                   className="h-8 px-3 border rounded-md text-sm bg-[#0070F2] text-white"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={isLoading}
+                  disabled={isRunning}
                 >
                   Próxima
                 </button>
@@ -944,7 +942,7 @@ const OptInManagement = () => {
                     onChange={(e) => setFormData({ ...formData, financiador: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-revvo-blue focus:border-transparent"
                     required
-                    disabled={isLoading}
+                    disabled={isRunning}
                   />
                 </div>
 
@@ -956,7 +954,7 @@ const OptInManagement = () => {
                     value={formData.termo_renovacao}
                     onChange={(e) => setFormData({ ...formData, termo_renovacao: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-revvo-blue focus:border-transparent"
-                    disabled={isLoading}
+                    disabled={isRunning}
                   >
                     <option value="">Selecione um termo</option>
                     <option value="termo-banco-pantera">Termo Banco Pantera</option>
@@ -994,7 +992,7 @@ const OptInManagement = () => {
                     onChange={(e) => setFormData({ ...formData, data_realizacao: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-revvo-blue focus:border-transparent"
                     required
-                    disabled={isLoading}
+                    disabled={isRunning}
                   />
                 </div>
 
@@ -1008,7 +1006,7 @@ const OptInManagement = () => {
                     onChange={(e) => setFormData({ ...formData, data_vencimento: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-revvo-blue focus:border-transparent"
                     required
-                    disabled={isLoading}
+                    disabled={isRunning}
                   />
                 </div>
 
@@ -1019,7 +1017,7 @@ const OptInManagement = () => {
                     checked={formData.ativo}
                     onChange={(e) => setFormData({ ...formData, ativo: e.target.checked })}
                     className="h-4 w-4 text-revvo-blue focus:ring-revvo-blue border-gray-300 rounded"
-                    disabled={isLoading}
+                    disabled={isRunning}
                   />
                   <label htmlFor="ativo" className="ml-2 block text-sm text-gray-900">
                     Autorização ativa
@@ -1034,20 +1032,20 @@ const OptInManagement = () => {
                       setEditingRecord(null);
                       resetForm();
                     }}
-                    disabled={isLoading}
+                    disabled={isRunning}
                     className="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isRunning}
                     className="px-4 py-2 bg-revvo-blue text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                   >
-                    {isLoading && (
+                    {isRunning && (
                       <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-r-transparent mr-2"></div>
                     )}
-                    {editingRecord ? 'Atualizar' : 'Salvar'}
+                    {isRunning ? 'Salvando...' : editingRecord ? 'Atualizar' : 'Salvar'}
                   </button>
                 </div>
               </form>
@@ -1056,7 +1054,7 @@ const OptInManagement = () => {
         )}
 
         {/* Loading Overlay */}
-        {isLoading && (
+        {isRunning && (
           <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-40">
             <div className="bg-white rounded-lg p-4 flex items-center">
               <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-revvo-blue border-r-transparent mr-3"></div>

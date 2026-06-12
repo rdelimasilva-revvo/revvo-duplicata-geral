@@ -21,7 +21,7 @@ export const DebugProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setDebugData 
     }}>
       {children}
-      {isDebugEnabled && <DebugPanel />}
+      {import.meta.env.DEV && isDebugEnabled && <DebugPanel />}
     </DebugContext.Provider>
   );
 };

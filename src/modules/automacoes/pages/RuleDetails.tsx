@@ -4,9 +4,11 @@ import { X } from 'lucide-react';
 import { supabase } from '@/modules/automacoes/lib/supabase';
 import { Notification } from '@/modules/automacoes/components/Notification';
 import { TransferList } from '@/modules/automacoes/components/TransferList';
+import { RuleCriteria } from '@/modules/automacoes/components/RuleCriteria';
 import { formatToBRL } from '@/modules/automacoes/utils/currencyUtils';
 import { useStore } from '@/modules/automacoes/store/useStore';
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
+import { UnsavedChangesModal } from '@/components/common/UnsavedChangesModal';
 import type { Database } from '@/modules/automacoes/lib/database.types';
 import {
   mockCompanies,
@@ -40,7 +42,7 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
   const id = ruleId || params.id;
   const navigate = useNavigate();
   const { companyId } = useStore();
-  const { hasChanges, markChanged, markSaved, confirmLeave } = useUnsavedChanges();
+  const { markChanged, markSaved, confirmIfUnsaved, isConfirmOpen, handleConfirm, handleCancel } = useUnsavedChanges();
 
   const [rule, setRule] = useState<Rule | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,24 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
     type: 'success' | 'error';
     message: string;
   } | null>(null);
+
+  // Resolve o tipo da regra pelo NOME (robusto a divergências de ID entre
+  // ambientes), em vez de assumir IDs fixos.
+  const selectedRuleType = ruleTypes.find((t) => t.id === rule?.rule_type_id);
+  const selectedRuleTypeName = (selectedRuleType?.name || '').toLowerCase();
+  const isEscrituracao = selectedRuleTypeName.includes('escritur');
+  const isManifestacao = selectedRuleTypeName.includes('manifest');
+  const usesCriteria = isEscrituracao || isManifestacao;
+  const criteriaContext = isManifestacao ? 'manifestacao' : 'escrituracao';
+
+  // Aplica um patch parcial na regra marcando o formulário como alterado.
+  const patchRule = useCallback(
+    (patch: Partial<Rule>) => {
+      markChanged();
+      setRule((prev) => (prev ? { ...prev, ...patch } : prev));
+    },
+    [markChanged],
+  );
 
   const loadDropdownData = useCallback(async () => {
     try {
@@ -191,26 +211,19 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
         .map((c) => c.id);
 
       if (selectedCompanyIds.length > 0) {
-        if (rule.asset_origin_id === 2) {
-          loadSuppliers(selectedCompanyIds);
-        } else {
-          loadCustomers(selectedCompanyIds);
-        }
+        // Escrituração e manifestação usam emissor (supplier) E cliente
+        // (customer) como critérios independentes — ambas as listas são necessárias.
+        if (usesCriteria || rule.asset_origin_id === 2) loadSuppliers(selectedCompanyIds);
+        if (usesCriteria || rule.asset_origin_id !== 2) loadCustomers(selectedCompanyIds);
       } else {
-        if (rule.asset_origin_id === 2) {
-          setAvailableSuppliers(mockSuppliers);
-        } else {
-          setAvailableCustomers(mockCustomers);
-        }
+        if (usesCriteria || rule.asset_origin_id === 2) setAvailableSuppliers(mockSuppliers);
+        if (usesCriteria || rule.asset_origin_id !== 2) setAvailableCustomers(mockCustomers);
       }
     } catch {
-      if (rule.asset_origin_id === 2) {
-        setAvailableSuppliers(mockSuppliers);
-      } else {
-        setAvailableCustomers(mockCustomers);
-      }
+      if (usesCriteria || rule.asset_origin_id === 2) setAvailableSuppliers(mockSuppliers);
+      if (usesCriteria || rule.asset_origin_id !== 2) setAvailableCustomers(mockCustomers);
     }
-  }, [rule?.asset_origin_id, companies, rule?.company_code]);
+  }, [rule?.asset_origin_id, companies, rule?.company_code, usesCriteria]);
 
   useEffect(() => {
     if (rule?.rule_type_id === 2 && rule.bank_id) {
@@ -310,14 +323,26 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
       if (!rule.name?.trim()) validationErrors.push('O nome da regra é obrigatório');
       if (!rule.rule_type_id) validationErrors.push('O tipo de regra é obrigatório');
 
-      if (rule.rule_type_id === 2) {
+      if (usesCriteria) {
+        // Escrituração/manifestação: pelo menos um critério precisa estar ativo.
+        const hasCriterio =
+          (rule.supplier?.length ?? 0) > 0 ||
+          (rule.customer?.length ?? 0) > 0 ||
+          (rule.value_ini ?? 0) > 0 ||
+          (rule.value_end ?? 0) > 0 ||
+          rule.days_until_due_date_ini != null ||
+          rule.days_until_due_date_end != null ||
+          rule.issue_date_mode != null ||
+          rule.due_date_mode != null ||
+          (rule.value_divergence_pct ?? 0) > 0 ||
+          (rule.value_divergence_abs ?? 0) > 0;
+        if (!hasCriterio) validationErrors.push(`Defina pelo menos um critério de ${isManifestacao ? 'manifestação' : 'escrituração'}`);
+      } else if (rule.rule_type_id === 2) {
         if (!rule.output_channel_id) validationErrors.push('O canal de saída é obrigatório para regras de Risco Sacado');
         if (selectedBanks.length === 0) validationErrors.push('Selecione pelo menos um banco');
         const items = rule.asset_origin_id === 2 ? rule.supplier : rule.customer;
         if (!items?.length) validationErrors.push(`Selecione pelo menos um ${rule.asset_origin_id === 2 ? 'fornecedor' : 'cliente'}`);
-      }
-
-      if (rule.rule_type_id === 1 || rule.rule_type_id === 3) {
+      } else if (rule.rule_type_id === 1) {
         const items = rule.asset_origin_id === 2 ? rule.supplier : rule.customer;
         if (!items?.length) validationErrors.push(`Selecione pelo menos um ${rule.asset_origin_id === 2 ? 'fornecedor' : 'cliente'}`);
       }
@@ -332,16 +357,29 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
         rule_type_id: rule.rule_type_id ? Number(rule.rule_type_id) : null,
         asset_origin_id: rule.asset_origin_id ? Number(rule.asset_origin_id) : null,
         bkpg_channel_id: rule.bkpg_channel_id ? Number(rule.bkpg_channel_id) : null,
-        supplier: rule.asset_origin_id === 2 ? rule.supplier || [] : [],
-        customer: rule.asset_origin_id !== 2 ? rule.customer || [] : [],
+        // Escrituração/manifestação mantêm emissor e cliente como critérios independentes.
+        supplier: usesCriteria || rule.asset_origin_id === 2 ? rule.supplier || [] : [],
+        customer: usesCriteria || rule.asset_origin_id !== 2 ? rule.customer || [] : [],
         value_ini: rule.value_ini !== null && !isNaN(rule.value_ini) ? Number(rule.value_ini.toFixed(2)) : null,
         value_end: rule.value_end !== null && !isNaN(rule.value_end) ? Number(rule.value_end.toFixed(2)) : null,
         days_since_creation: rule.days_since_creation ? Number(rule.days_since_creation) : null,
+        days_until_due_date_ini: rule.days_until_due_date_ini ?? null,
+        days_until_due_date_end: rule.days_until_due_date_end ?? null,
+        issue_date_mode: rule.issue_date_mode ?? null,
+        issue_date_ini: rule.issue_date_ini ?? null,
+        issue_date_end: rule.issue_date_end ?? null,
+        issue_date_rel_days: rule.issue_date_rel_days ?? null,
+        due_date_mode: rule.due_date_mode ?? null,
+        due_date_ini: rule.due_date_ini ?? null,
+        due_date_end: rule.due_date_end ?? null,
+        due_date_rel_days: rule.due_date_rel_days ?? null,
+        value_divergence_pct: isManifestacao ? rule.value_divergence_pct ?? null : null,
+        value_divergence_abs: isManifestacao ? rule.value_divergence_abs ?? null : null,
         active: Boolean(rule.active),
         company_id: companyId,
         updated_at: new Date().toISOString(),
-        output_channel_id: rule.output_channel_id,
-        bank_id: rule.rule_type_id === 2 ? selectedBanks : [],
+        output_channel_id: usesCriteria ? null : rule.output_channel_id,
+        bank_id: !usesCriteria && rule.rule_type_id === 2 ? selectedBanks : [],
         asset_type_id: [1, 2, 3].includes(rule.rule_type_id!) ? 1 : null,
       };
 
@@ -399,9 +437,11 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
     <div className="max-w-4xl mx-auto">
       {notification && <Notification type={notification.type} message={notification.message} onClose={() => setNotification(null)} />}
 
+      <UnsavedChangesModal isOpen={isConfirmOpen} onConfirm={handleConfirm} onCancel={handleCancel} />
+
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-xl font-semibold text-[#1D2D3E]">Detalhes da Regra</h1>
-        <button onClick={() => confirmLeave(() => navigate(basePath))} className="text-[#556B82] hover:text-[#1D2D3E] transition-colors p-1 rounded-md hover:bg-[#F5F6F7]">
+        <button onClick={() => confirmIfUnsaved(() => navigate(basePath))} className="text-[#556B82] hover:text-[#1D2D3E] transition-colors p-1 rounded-md hover:bg-[#F5F6F7]">
           <X size={20} />
         </button>
       </div>
@@ -518,7 +558,19 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
             </div>
           </div>
 
-          {(rule.rule_type_id === 1 || rule.rule_type_id === 2 || rule.rule_type_id === 3) && (
+          {usesCriteria ? (
+            <>
+              <hr className="border-[#E8EAED] my-1" />
+
+              <RuleCriteria
+                context={criteriaContext}
+                rule={rule}
+                onPatch={patchRule}
+                emitters={availableSuppliers}
+                clients={availableCustomers}
+              />
+            </>
+          ) : (rule.rule_type_id === 1 || rule.rule_type_id === 2 || rule.rule_type_id === 3) ? (
             <>
               <hr className="border-[#E8EAED] my-1" />
 
@@ -612,11 +664,11 @@ export default function RuleDetails({ basePath = '/app/automacoes', ruleId }: Ru
                 </>
               )}
             </>
-          )}
+          ) : null}
 
           <div className="flex justify-end gap-3 pt-4 border-t border-[#E8EAED]">
             <button
-              onClick={() => confirmLeave(() => navigate(basePath))}
+              onClick={() => confirmIfUnsaved(() => navigate(basePath))}
               className="h-[34px] px-5 rounded-[6px] text-[13px] font-medium text-[#556B82] hover:bg-[#F5F6F7] transition-colors"
             >
               Cancelar

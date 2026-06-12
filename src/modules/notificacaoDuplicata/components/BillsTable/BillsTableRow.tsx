@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bill } from '@/modules/notificacaoDuplicata/components/BillsTable/types';
 import { tableStyles } from '@/modules/notificacaoDuplicata/components/BillsTable/styles';
-import { DotsThree } from '@phosphor-icons/react';
+import { MoreHorizontal } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
 
 interface BillsTableRowProps {
@@ -51,7 +51,7 @@ export function BillsTableRow({ bill }: BillsTableRowProps) {
           className="p-1 hover:bg-gray-100 rounded transition-colors"
           title="Ações"
         >
-          <DotsThree size={20} className="text-gray-600" />
+          <MoreHorizontal size={20} className="text-gray-600" />
         </button>
         {showActions && (
           <>

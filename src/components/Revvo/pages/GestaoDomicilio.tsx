@@ -5,11 +5,12 @@ import { Badge } from '../ui/Badge';
 import { KPICard } from '../ui/KPICard';
 import { FilterAccordion } from '../ui/FilterAccordion';
 import {
-  Bank,
-  Warning,
-  CheckCircle,
-  Clock
-} from '@phosphor-icons/react';
+  Landmark,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Search
+} from 'lucide-react';
 
 interface Domicilio {
   id: string;
@@ -126,7 +127,7 @@ export const GestaoDomicilio: React.FC = () => {
           <h1 className="text-2xl font-bold text-[#1F2937]">Gestão de Domicílio Certo</h1>
           <p className="text-sm text-gray-500 mt-1">Gerencie as mudanças de domicílio bancário</p>
         </div>
-        <Button variant="primary" icon={<Bank size={14} weight="bold" />}>
+        <Button variant="primary" icon={<Landmark size={14} />}>
           Nova Solicitação
         </Button>
       </div>
@@ -135,25 +136,25 @@ export const GestaoDomicilio: React.FC = () => {
         <KPICard
           title="Casos Críticos"
           value={criticos}
-          icon={<Warning size={20} weight="bold" />}
+          icon={<AlertTriangle size={20} />}
           alert="Ação imediata necessária"
         />
         <KPICard
           title="Pendentes"
           value={pendentes}
-          icon={<Clock size={20} weight="bold" />}
+          icon={<Clock size={20} />}
           subtitle="Aguardando resposta"
         />
         <KPICard
           title="Aprovados"
           value={aprovados}
-          icon={<CheckCircle size={20} weight="bold" />}
+          icon={<CheckCircle2 size={20} />}
           subtitle="Este mês"
         />
         <KPICard
           title="Total de Títulos"
           value={mockDomicilios.length}
-          icon={<Bank size={20} weight="bold" />}
+          icon={<Landmark size={20} />}
           subtitle="Em gestão"
         />
       </div>
@@ -216,6 +217,17 @@ export const GestaoDomicilio: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
+              {mockDomicilios.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <Search size={32} className="text-gray-300 mb-3" />
+                      <p className="text-sm font-medium text-gray-500">Nenhum registro encontrado</p>
+                      <p className="text-xs text-gray-400 mt-1">Ajuste os filtros ou crie uma nova solicitação.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
               {mockDomicilios.map((dom) => (
                 <tr key={dom.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium text-gray-900">{dom.numeroTitulo}</td>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Search,
   FileText,
@@ -6,7 +6,10 @@ import {
   CheckCircle2,
   XCircle,
   CalendarClock,
+  ChevronLeft,
+  ChevronRight,
   Download,
+  FilterX,
   X,
   Hash,
   User,
@@ -17,6 +20,8 @@ import {
   Printer,
 } from 'lucide-react';
 import { mockSuppliers, SupplierDuplicate } from './mockSuppliers';
+import { useToast } from '../../context/ToastContext';
+import { exportToCsv } from '../../utils/csvExport';
 
 interface FlatDuplicate extends SupplierDuplicate {
   supplierId: string;
@@ -71,6 +76,53 @@ const STATUSES: Array<'all' | SupplierDuplicate['status']> = [
   'Vencida',
   'Cancelada',
 ];
+
+const PAGE_SIZES = [10, 25, 50];
+
+const FILTERS_STORAGE_KEY = 'duplicatas-geradas:filters';
+
+interface StoredFilters {
+  search: string;
+  status: 'all' | SupplierDuplicate['status'];
+  supplier: string;
+  pageSize: number;
+}
+
+const loadStoredFilters = (): Partial<StoredFilters> => {
+  try {
+    const raw = sessionStorage.getItem(FILTERS_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as Partial<StoredFilters>;
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const CSV_HEADERS = [
+  'Nº Duplicata',
+  'Fornecedor',
+  'CNPJ do Fornecedor',
+  'Sacado',
+  'CNPJ do Sacado',
+  'Emissão',
+  'Vencimento',
+  'Valor',
+  'Status',
+];
+
+const buildCsvRows = (items: FlatDuplicate[]): (string | number)[][] =>
+  items.map((d) => [
+    d.numero,
+    d.supplierName,
+    d.supplierCnpj,
+    d.sacado,
+    d.cnpjSacado,
+    d.emissao,
+    d.vencimento,
+    formatCurrency(d.valor),
+    d.status,
+  ]);
 
 const parseBrDate = (s: string) => {
   const [d, m, y] = s.split('/').map(Number);
@@ -314,11 +366,26 @@ const DuplicateDetailModal: React.FC<{
 };
 
 const DuplicatasGeradas: React.FC = () => {
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] =
-    useState<'all' | SupplierDuplicate['status']>('all');
-  const [supplierFilter, setSupplierFilter] = useState<string>('all');
+  const { showToast } = useToast();
+  const [stored] = useState(loadStoredFilters);
+  const [search, setSearch] = useState(
+    typeof stored.search === 'string' ? stored.search : ''
+  );
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | SupplierDuplicate['status']
+  >(stored.status && STATUSES.includes(stored.status) ? stored.status : 'all');
+  const [supplierFilter, setSupplierFilter] = useState<string>(
+    typeof stored.supplier === 'string' ? stored.supplier : 'all'
+  );
+  const [pageSize, setPageSize] = useState<number>(
+    typeof stored.pageSize === 'number' && PAGE_SIZES.includes(stored.pageSize)
+      ? stored.pageSize
+      : 10
+  );
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const selectAllRef = useRef<HTMLInputElement>(null);
 
   const selected = useMemo(
     () => allDuplicates.find((d) => d.id === selectedId) ?? null,
@@ -339,6 +406,141 @@ const DuplicatasGeradas: React.FC = () => {
     });
   }, [search, statusFilter, supplierFilter]);
 
+  const hasActiveFilters =
+    search !== '' || statusFilter !== 'all' || supplierFilter !== 'all';
+
+  // Persiste filtros na sessão para o usuário não reconfigurar a cada navegação
+  useEffect(() => {
+    try {
+      if (hasActiveFilters || pageSize !== 10) {
+        sessionStorage.setItem(
+          FILTERS_STORAGE_KEY,
+          JSON.stringify({
+            search,
+            status: statusFilter,
+            supplier: supplierFilter,
+            pageSize,
+          } satisfies StoredFilters)
+        );
+      } else {
+        sessionStorage.removeItem(FILTERS_STORAGE_KEY);
+      }
+    } catch {
+      // sessionStorage indisponível — segue sem persistência
+    }
+  }, [search, statusFilter, supplierFilter, pageSize, hasActiveFilters]);
+
+  // Volta para a primeira página quando os filtros mudam
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, supplierFilter, pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const page = Math.min(currentPage, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((page - 1) * pageSize, page * pageSize),
+    [filtered, page, pageSize]
+  );
+
+  const selectedDuplicates = useMemo(
+    () => allDuplicates.filter((d) => selectedIds.has(d.id)),
+    [selectedIds]
+  );
+  const allFilteredSelected =
+    filtered.length > 0 && filtered.every((d) => selectedIds.has(d.id));
+  const someFilteredSelected = filtered.some((d) => selectedIds.has(d.id));
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate =
+        someFilteredSelected && !allFilteredSelected;
+    }
+  }, [someFilteredSelected, allFilteredSelected]);
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allFilteredSelected) {
+        filtered.forEach((d) => next.delete(d.id));
+      } else {
+        filtered.forEach((d) => next.add(d.id));
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setStatusFilter('all');
+    setSupplierFilter('all');
+    setCurrentPage(1);
+    try {
+      sessionStorage.removeItem(FILTERS_STORAGE_KEY);
+    } catch {
+      // sessionStorage indisponível — nada a limpar
+    }
+  };
+
+  const handleExportCsv = () => {
+    if (filtered.length === 0) {
+      showToast(
+        'warning',
+        'Nenhuma duplicata para exportar',
+        'Ajuste os filtros e tente novamente.'
+      );
+      return;
+    }
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    exportToCsv(
+      `duplicatas-${dateStamp}.csv`,
+      CSV_HEADERS,
+      buildCsvRows(filtered)
+    );
+    showToast(
+      'success',
+      `${filtered.length} duplicata${filtered.length === 1 ? '' : 's'} exportada${filtered.length === 1 ? '' : 's'}`,
+      'O arquivo CSV foi gerado com as linhas filtradas.'
+    );
+  };
+
+  const handleBulkExport = () => {
+    const count = selectedDuplicates.length;
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    exportToCsv(
+      `duplicatas-selecionadas-${dateStamp}.csv`,
+      CSV_HEADERS,
+      buildCsvRows(selectedDuplicates)
+    );
+    setSelectedIds(new Set());
+    showToast(
+      'success',
+      `${count} duplicata${count === 1 ? '' : 's'} exportada${count === 1 ? '' : 's'}`,
+      'O arquivo CSV foi gerado com as duplicatas selecionadas.'
+    );
+  };
+
+  const handleBulkCopy = () => {
+    const count = selectedDuplicates.length;
+    navigator.clipboard?.writeText(
+      selectedDuplicates.map((d) => d.numero).join('\n')
+    );
+    setSelectedIds(new Set());
+    showToast(
+      'success',
+      `${count} número${count === 1 ? '' : 's'} copiado${count === 1 ? '' : 's'}`,
+      'Os números das duplicatas foram copiados para a área de transferência.'
+    );
+  };
+
   const total = allDuplicates.length;
   const totalValue = allDuplicates.reduce((s, d) => s + d.valor, 0);
   const liquidated = allDuplicates.filter((d) => d.status === 'Liquidada').length;
@@ -346,7 +548,7 @@ const DuplicatasGeradas: React.FC = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-full max-h-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-start justify-between pt-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Duplicatas</h1>
@@ -355,7 +557,10 @@ const DuplicatasGeradas: React.FC = () => {
               via parceiro de escrituração.
             </p>
           </div>
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+          <button
+            onClick={handleExportCsv}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+          >
             <Download className="w-4 h-4" />
             Exportar
           </button>
@@ -441,13 +646,73 @@ const DuplicatasGeradas: React.FC = () => {
                   {s === 'all' ? 'Todos' : s}
                 </button>
               ))}
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-200 bg-white hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                  title="Limpar filtros e busca"
+                >
+                  <FilterX className="w-3.5 h-3.5" />
+                  Limpar filtros
+                </button>
+              )}
+              <button
+                onClick={handleExportCsv}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-700 border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+                title="Exportar todas as linhas filtradas em CSV"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Exportar CSV
+              </button>
             </div>
           </div>
+
+          {selectedIds.size > 0 && (
+            <div className="sticky top-0 z-20 px-6 py-3 bg-blue-50 border-b border-blue-200 flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm font-medium text-blue-800">
+                {selectedIds.size} duplicata{selectedIds.size === 1 ? '' : 's'}{' '}
+                selecionada{selectedIds.size === 1 ? '' : 's'}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleBulkExport}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 bg-white border border-blue-200 hover:bg-blue-100 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  Exportar CSV
+                </button>
+                <button
+                  onClick={handleBulkCopy}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-blue-700 bg-white border border-blue-200 hover:bg-blue-100 transition-colors"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  Copiar números
+                </button>
+                <button
+                  onClick={() => setSelectedIds(new Set())}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-blue-100 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  Limpar seleção
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr className="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  <th className="pl-6 pr-2 py-3 w-10">
+                    <input
+                      ref={selectAllRef}
+                      type="checkbox"
+                      checked={allFilteredSelected}
+                      onChange={toggleSelectAll}
+                      aria-label="Selecionar todas as duplicatas filtradas"
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                  </th>
                   <th className="px-6 py-3">Nº Duplicata</th>
                   <th className="px-6 py-3">Fornecedor</th>
                   <th className="px-6 py-3">Sacado</th>
@@ -460,17 +725,31 @@ const DuplicatasGeradas: React.FC = () => {
               <tbody className="divide-y divide-gray-100">
                 {filtered.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-gray-500">
+                    <td colSpan={8} className="px-6 py-10 text-center text-gray-500">
                       Nenhuma duplicata encontrada para o filtro atual.
                     </td>
                   </tr>
                 )}
-                {filtered.map((d) => (
+                {paginated.map((d) => (
                   <tr
                     key={d.id}
-                    className="hover:bg-blue-50/40 cursor-pointer transition-colors"
+                    className={`hover:bg-blue-50/40 cursor-pointer transition-colors ${
+                      selectedIds.has(d.id) ? 'bg-blue-50/60' : ''
+                    }`}
                     onClick={() => setSelectedId(d.id)}
                   >
+                    <td
+                      className="pl-6 pr-2 py-3 w-10"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(d.id)}
+                        onChange={() => toggleSelectOne(d.id)}
+                        aria-label={`Selecionar duplicata ${d.numero}`}
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                    </td>
                     <td className="px-6 py-3 font-medium text-blue-700 hover:underline">
                       {d.numero}
                     </td>
@@ -501,12 +780,53 @@ const DuplicatasGeradas: React.FC = () => {
             </table>
           </div>
 
-          <div className="px-6 py-3 border-t border-gray-200 text-xs text-gray-500 flex items-center justify-between">
+          <div className="px-6 py-3 border-t border-gray-200 text-xs text-gray-500 flex flex-wrap items-center justify-between gap-3">
             <div>
-              Exibindo {filtered.length} de {total} duplicatas
+              Exibindo{' '}
+              {filtered.length === 0 ? 0 : (page - 1) * pageSize + 1}–
+              {Math.min(page * pageSize, filtered.length)} de {filtered.length}{' '}
+              duplicata{filtered.length === 1 ? '' : 's'} filtrada
+              {filtered.length === 1 ? '' : 's'} ({total} no total)
             </div>
-            <div className="text-gray-400">
-              Clique em uma duplicata para ver detalhes
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2">
+                Itens por página
+                <select
+                  value={pageSize}
+                  onChange={(e) => setPageSize(Number(e.target.value))}
+                  className="px-2 py-1 border border-gray-200 rounded-lg text-xs bg-white focus:outline-none focus:border-blue-500"
+                >
+                  {PAGE_SIZES.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCurrentPage(page - 1)}
+                  disabled={page <= 1}
+                  aria-label="Página anterior"
+                  className="p-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="px-2 text-gray-600">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(page + 1)}
+                  disabled={page >= totalPages}
+                  aria-label="Próxima página"
+                  className="p-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="hidden lg:block text-gray-400">
+                Clique em uma duplicata para ver detalhes
+              </div>
             </div>
           </div>
         </div>

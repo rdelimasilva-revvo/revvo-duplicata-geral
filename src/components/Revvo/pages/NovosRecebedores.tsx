@@ -1,23 +1,23 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  CaretDown,
-  CaretUp,
-  CaretUpDown,
-  FunnelSimple,
+  ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
+  Filter,
   X,
   Eye,
-  Bank,
+  Landmark,
   User,
   Calendar,
   ArrowRight,
   FileText,
   Info,
   Clock,
-  CheckCircle,
-  Warning,
+  CheckCircle2,
+  AlertTriangle,
   Download,
-  Buildings,
-} from '@phosphor-icons/react';
+  Building2,
+} from 'lucide-react';
 import { StatsCard } from '../../FornecedorDivergente/StatsCard';
 
 type RecebedorStatus = 'pendente' | 'em_cadastramento' | 'cadastrado';
@@ -174,7 +174,7 @@ function DetailModal({ recebedor, isOpen, onClose }: { recebedor: Recebedor | nu
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Detalhes da Solicitação</h2>
-            <p className="text-sm text-gray-500 mt-0.5">ID: {recebedor.id}</p>
+            <p className="text-sm text-gray-500 mt-0.5">Protocolo {recebedor.id}</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-6 h-6" />
@@ -220,14 +220,14 @@ function DetailModal({ recebedor, isOpen, onClose }: { recebedor: Recebedor | nu
 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div>
-              <SectionTitle icon={<Bank size={18} />} title="Recebedor Original" />
+              <SectionTitle icon={<Landmark size={18} />} title="Recebedor Original" />
               <RecebedorCard data={recebedor.recebedorOriginal} variant="original" />
             </div>
             <div className="relative">
               <div className="hidden md:flex absolute -left-3 top-1/2 -translate-y-1/2 -translate-x-full w-6 h-6 items-center justify-center bg-blue-100 rounded-full">
-                <ArrowRight size={14} className="text-blue-600" weight="bold" />
+                <ArrowRight size={14} className="text-blue-600" />
               </div>
-              <SectionTitle icon={<Bank size={18} />} title="Novo Recebedor" />
+              <SectionTitle icon={<Landmark size={18} />} title="Novo Recebedor" />
               <RecebedorCard data={recebedor.novoRecebedor} variant="novo" />
             </div>
           </div>
@@ -323,9 +323,9 @@ export const NovosRecebedores: React.FC = () => {
   };
 
   const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return <CaretUpDown size={14} className="text-gray-400" />;
-    if (sortDirection === 'asc') return <CaretUp size={14} className="text-blue-600" weight="bold" />;
-    return <CaretDown size={14} className="text-blue-600" weight="bold" />;
+    if (sortField !== field) return <ChevronsUpDown size={14} className="text-gray-400" />;
+    if (sortDirection === 'asc') return <ChevronUp size={14} className="text-blue-600" />;
+    return <ChevronDown size={14} className="text-blue-600" />;
   };
 
   const handleFilterChange = useCallback((field: keyof FilterState, value: string) => {
@@ -361,13 +361,13 @@ export const NovosRecebedores: React.FC = () => {
           <StatsCard
             title="Total de Solicitações"
             value={stats.total}
-            icon={<Buildings size={20} />}
+            icon={<Building2 size={20} />}
             layout="stacked"
           />
           <StatsCard
             title="Pendente"
             value={stats.pendente}
-            icon={<Warning size={20} />}
+            icon={<AlertTriangle size={20} />}
             layout="stacked"
           />
           <StatsCard
@@ -379,7 +379,7 @@ export const NovosRecebedores: React.FC = () => {
           <StatsCard
             title="Cadastrado"
             value={stats.cadastrado}
-            icon={<CheckCircle size={20} />}
+            icon={<CheckCircle2 size={20} />}
             layout="stacked"
           />
         </div>
@@ -390,10 +390,10 @@ export const NovosRecebedores: React.FC = () => {
             onClick={() => setIsFiltersExpanded(!isFiltersExpanded)}
           >
             <div className="flex items-center gap-3">
-              <FunnelSimple className="w-5 h-5 text-gray-700" />
+              <Filter className="w-5 h-5 text-gray-700" />
               <span className="font-semibold text-gray-900 text-base">Filtros</span>
             </div>
-            <CaretDown className={`w-5 h-5 text-gray-700 transition-transform ${isFiltersExpanded ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-5 h-5 text-gray-700 transition-transform ${isFiltersExpanded ? 'rotate-180' : ''}`} />
           </button>
 
           {isFiltersExpanded && (
@@ -651,7 +651,7 @@ export const NovosRecebedores: React.FC = () => {
 
           {sortedData.length === 0 && (
             <div className="text-center py-12">
-              <Buildings className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Building2 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 text-lg mb-2">Nenhum registro encontrado</p>
               <p className="text-gray-400">Ajuste os filtros ou tente uma busca diferente</p>
             </div>

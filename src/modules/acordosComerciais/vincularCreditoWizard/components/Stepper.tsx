@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check } from '@phosphor-icons/react';
+import { Check } from 'lucide-react';
 import {
   StepperList,
   StepItem,
@@ -42,7 +42,7 @@ export function Stepper({ currentIndex, onJumpTo }: StepperProps) {
               aria-current={state === 'active' ? 'step' : undefined}
             >
               <StepNumberBubble $state={state}>
-                {state === 'completed' ? <Check size={14} weight="bold" /> : step.index + 1}
+                {state === 'completed' ? <Check size={14} /> : step.index + 1}
               </StepNumberBubble>
               <StepText>
                 <span>{step.title}</span>

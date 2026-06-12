@@ -69,6 +69,33 @@ const HELP_SECTIONS: Record<string, HelpSection> = {
       { question: 'Como aderir ao opt-in?', answer: 'Acesse o módulo de Gestão de Opt-in e siga o fluxo de adesão.' },
     ],
   },
+  'payment-report': {
+    title: 'Relatório de Pagamentos',
+    faqs: [
+      { question: 'O que o relatório de pagamentos apresenta?', answer: 'Consolida as duplicatas liquidadas e pendentes de pagamento, com valores, datas de vencimento e liquidação e o domicílio bancário de destino.' },
+      { question: 'Como filtrar os pagamentos por período?', answer: 'Use o filtro de datas no topo da tela para selecionar o intervalo desejado. Você também pode combinar filtros por sacado, status e valor.' },
+      { question: 'Como exportar o relatório?', answer: 'Clique em "Exportar" na barra de ações para baixar os dados em planilha. A exportação respeita os filtros aplicados.' },
+      { question: 'O que significa o status "Liquidada"?', answer: 'Indica que o pagamento da duplicata foi confirmado e o valor foi creditado no domicílio bancário cadastrado.' },
+    ],
+  },
+  'profiles-access': {
+    title: 'Perfis e Acessos',
+    faqs: [
+      { question: 'Como convidar um novo usuário?', answer: 'Clique em "Adicionar usuário", informe o e-mail e selecione o perfil de acesso. O usuário receberá um convite por e-mail.' },
+      { question: 'Qual a diferença entre os perfis?', answer: 'O perfil Administrador gerencia usuários e configurações; o Operador realiza manifestações e escrituração; o perfil Consulta apenas visualiza dados.' },
+      { question: 'Como alterar o perfil de um usuário?', answer: 'Localize o usuário na listagem, abra o menu de opções e selecione "Editar perfil". A alteração vale a partir do próximo login.' },
+      { question: 'Como revogar o acesso de um usuário?', answer: 'Abra o menu de opções do usuário e selecione "Desativar". O acesso é bloqueado imediatamente, sem excluir o histórico de ações.' },
+    ],
+  },
+  'receivables-sacados': {
+    title: 'Cadastro de Sacados',
+    faqs: [
+      { question: 'O que é um sacado?', answer: 'É o devedor responsável pelo pagamento da duplicata. O cadastro correto do sacado é obrigatório para a escrituração no Banco Central.' },
+      { question: 'Como cadastrar um novo sacado?', answer: 'Clique em "Novo sacado" e informe CNPJ ou CPF, razão social e dados de contato. O documento é validado automaticamente.' },
+      { question: 'Posso importar sacados em lote?', answer: 'Sim. Use a opção "Importar" para enviar uma planilha no modelo disponibilizado. Registros com inconsistências são apontados antes da confirmação.' },
+      { question: 'Por que manter o cadastro de sacados atualizado?', answer: 'Dados desatualizados podem gerar divergências na escrituração das duplicatas e atrasar notificações e manifestações do sacado.' },
+    ],
+  },
 };
 
 const KEYBOARD_SHORTCUTS = [
@@ -85,6 +112,9 @@ function getContextKey(currentView: string): string {
   if (currentView.startsWith('domicile-management')) return 'domicile-management-new';
   if (currentView.startsWith('automacoes')) return 'automacoes';
   if (currentView === 'opt-in-management') return 'opt-in-management';
+  if (currentView === 'payment-report') return 'payment-report';
+  if (currentView === 'profiles-access') return 'profiles-access';
+  if (currentView === 'receivables-sacados') return 'receivables-sacados';
   return 'default';
 }
 

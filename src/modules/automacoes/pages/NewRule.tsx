@@ -72,6 +72,7 @@ export default function NewRule({ basePath = '/app/automacoes' }) {
     type: 'success' | 'error';
     message: string;
   } | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   useEffect(() => {
     loadDropdownData();
@@ -219,31 +220,34 @@ export default function NewRule({ basePath = '/app/automacoes' }) {
   };
 
   async function handleSave() {
+    // Validações detalhadas com mensagens específicas
+    const errors: string[] = [];
+
+    if (!rule.name?.trim()) {
+      errors.push('O nome da regra é obrigatório');
+    }
+
+    if (!rule.rule_type_id) {
+      errors.push('O tipo de regra é obrigatório');
+    }
+
+    if (rule.rule_type_id === 2) {
+      if (!rule.output_channel_id) {
+        errors.push('O canal de saída é obrigatório para regras de Risco Sacado');
+      }
+      if (selectedBanks.length === 0) {
+        errors.push('Selecione pelo menos um banco autorizado');
+      }
+    }
+
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    setValidationErrors([]);
+
     try {
-      // Validações detalhadas com mensagens específicas
-      const validationErrors = [];
-      
-      if (!rule.name?.trim()) {
-        validationErrors.push('O nome da regra é obrigatório');
-      }
-      
-      if (!rule.rule_type_id) {
-        validationErrors.push('O tipo de regra é obrigatório');
-      }
-
-      if (rule.rule_type_id === 2) {
-        if (!rule.output_channel_id) {
-          validationErrors.push('O canal de saída é obrigatório para regras de Risco Sacado');
-        }
-        if (selectedBanks.length === 0) {
-          validationErrors.push('Selecione pelo menos um banco autorizado');
-        }
-      }
-      
-      if (validationErrors.length > 0) {
-        throw new Error(validationErrors.join('\n'));
-      }
-
       // Preparar dados para inserção
       const ruleData = {
         name: rule.name.trim(),
@@ -423,6 +427,22 @@ export default function NewRule({ basePath = '/app/automacoes' }) {
           <X size={24} />
         </button>
       </div>
+
+      {validationErrors.length > 0 && (
+        <div className="mb-4 flex items-start gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-lg">
+          <AlertTriangle size={16} className="text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-800 mb-1">
+              Corrija os erros abaixo antes de salvar:
+            </p>
+            <ul className="list-disc list-inside text-sm text-red-700 space-y-0.5">
+              {validationErrors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="space-y-4">

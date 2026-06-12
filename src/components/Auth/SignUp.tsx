@@ -5,6 +5,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCompany } from '../../context/CompanyContext';
 import { useConfig } from '../../context/ConfigContext';
 import { storeCompanyId } from '../../utils/storage';
+import { getErrorDetails } from '../../utils/errorTranslation';
+import { ErrorMessage } from '../common/ErrorMessage';
 
 const formatCNPJ = (value: string) => {
   // Remove todos os caracteres não numéricos
@@ -24,6 +26,7 @@ const formatCNPJ = (value: string) => {
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{ companyName?: string; userName?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { setCompanyId } = useCompany();
@@ -36,8 +39,29 @@ const SignUp = () => {
     password: '',
   });
 
+  const validateCompanyName = (companyName: string) => {
+    if (!companyName.trim()) return 'Informe o nome da empresa';
+    if (companyName.trim().length < 2) return 'O nome da empresa deve ter pelo menos 2 caracteres';
+    if (companyName.trim().length > 100) return 'O nome da empresa deve ter no máximo 100 caracteres';
+    return undefined;
+  };
+
+  const validateUserName = (userName: string) => {
+    if (!userName.trim()) return 'Informe o nome do usuário';
+    if (userName.trim().length < 3) return 'O nome do usuário deve ter pelo menos 3 caracteres';
+    if (userName.trim().length > 50) return 'O nome do usuário deve ter no máximo 50 caracteres';
+    return undefined;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const companyNameErr = validateCompanyName(formData.companyName);
+    const userNameErr = validateUserName(formData.userName);
+    if (companyNameErr || userNameErr) {
+      setFieldErrors({ companyName: companyNameErr, userName: userNameErr });
+      return;
+    }
+    setFieldErrors({});
     try {
       setError(null);
       setIsLoading(true);
@@ -141,11 +165,13 @@ const SignUp = () => {
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Erro ao criar conta');
-      console.error('Error:', error);
+      console.error('Erro ao criar conta:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const errorDetails = error ? getErrorDetails(error) : null;
 
   return (
     <div className="flex min-h-screen">
@@ -187,10 +213,24 @@ const SignUp = () => {
               <input
                 type="text"
                 placeholder="Nome da Empresa"
-                className="w-full h-input px-6 border border-gray-2 rounded-md focus:outline-none focus:border-revvo-blue text-base font-onest"
+                className={`w-full h-input px-6 border rounded-md focus:outline-none text-base font-onest ${
+                  fieldErrors.companyName ? 'border-error focus:border-error' : 'border-gray-2 focus:border-revvo-blue'
+                }`}
                 value={formData.companyName}
-                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, companyName: e.target.value });
+                  if (fieldErrors.companyName) setFieldErrors(prev => ({ ...prev, companyName: undefined }));
+                }}
+                onBlur={() => {
+                  if (formData.companyName) {
+                    const err = validateCompanyName(formData.companyName);
+                    if (err) setFieldErrors(prev => ({ ...prev, companyName: err }));
+                  }
+                }}
               />
+              {fieldErrors.companyName && (
+                <p className="mt-1 text-sm text-error font-onest">{fieldErrors.companyName}</p>
+              )}
             </div>
             
             <div>
@@ -208,10 +248,24 @@ const SignUp = () => {
               <input
                 type="text"
                 placeholder="Nome do Usuário"
-                className="w-full h-input px-6 border border-gray-2 rounded-md focus:outline-none focus:border-revvo-blue text-base font-onest"
+                className={`w-full h-input px-6 border rounded-md focus:outline-none text-base font-onest ${
+                  fieldErrors.userName ? 'border-error focus:border-error' : 'border-gray-2 focus:border-revvo-blue'
+                }`}
                 value={formData.userName}
-                onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, userName: e.target.value });
+                  if (fieldErrors.userName) setFieldErrors(prev => ({ ...prev, userName: undefined }));
+                }}
+                onBlur={() => {
+                  if (formData.userName) {
+                    const err = validateUserName(formData.userName);
+                    if (err) setFieldErrors(prev => ({ ...prev, userName: err }));
+                  }
+                }}
               />
+              {fieldErrors.userName && (
+                <p className="mt-1 text-sm text-error font-onest">{fieldErrors.userName}</p>
+              )}
             </div>
 
             <div>
@@ -245,15 +299,22 @@ const SignUp = () => {
               </button>
             </div>
 
+            {errorDetails && (
+              <ErrorMessage
+                type="generic"
+                title={errorDetails.title}
+                message={errorDetails.message}
+                suggestion={errorDetails.suggestion}
+              />
+            )}
+
             <button
               type="submit"
-              className="w-full h-input bg-revvo-dark-blue text-white rounded-md hover:bg-opacity-90 transition-colors text-base font-onest font-semibold"
+              disabled={isLoading}
+              className="w-full h-input bg-revvo-dark-blue text-white rounded-md hover:bg-opacity-90 transition-colors text-base font-onest font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Criar conta
+              {isLoading ? 'Criando conta...' : 'Criar conta'}
             </button>
-            {error && (
-              <p className="mt-2 text-error text-sm">{error}</p>
-            )}
           </form>
 
           <div className="mt-6 text-center">

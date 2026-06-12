@@ -268,7 +268,7 @@ const Fornecedores: React.FC = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-full max-h-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex items-start justify-between gap-4 pt-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Fornecedores</h1>

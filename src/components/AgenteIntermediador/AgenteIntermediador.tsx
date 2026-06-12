@@ -61,6 +61,10 @@ const mockData = {
   ]
 };
 
+// Os dados acima são mock locais (hardcoded). Enquanto esta for a fonte,
+// o aviso de demonstração permanece visível ao usuário.
+const isMockData = true;
+
 const StatCard = ({ title, value, subtitle, icon: Icon, trend, trendValue, color = 'blue' }) => {
   const colorClasses = {
     blue: 'text-blue-600',
@@ -161,7 +165,7 @@ const AgenteIntermediador = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-full max-h-full overflow-y-auto">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="w-full space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between pt-4">
           <div>
@@ -169,6 +173,11 @@ const AgenteIntermediador = () => {
             <p className="text-gray-600 mt-1">
               Análise de duplicatas criadas pelos fornecedores - {currentTime.toLocaleDateString('pt-BR')} às {currentTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
             </p>
+            {isMockData && (
+              <span className="inline-flex items-center mt-2 px-2.5 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                Dados de demonstração
+              </span>
+            )}
           </div>
           <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             <RefreshCw className="w-4 h-4 mr-2" />

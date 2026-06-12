@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { Buildings, Clock, UserPlus, CheckCircle, Warning, FileText, CreditCard } from '@phosphor-icons/react';
+import { Building2, Clock, UserPlus, CheckCircle2, AlertTriangle, FileText, CreditCard } from 'lucide-react';
 import { DomicileManagementModal } from '@/modules/gestorDomicilio/components/domicile/DomicileManagementModal';
 import { UnregisteredSuppliersModal } from '@/modules/gestorDomicilio/components/suppliers/UnregisteredSuppliersModal';
 import { cn } from '@/modules/gestorDomicilio/lib/utils';
@@ -95,7 +95,7 @@ export function DomicileStatsCard({
 
       {status === 'urgent' && (
         <div className="mt-auto flex items-center gap-1.5 text-xs font-medium text-red-600">
-          <Warning className="w-3.5 h-3.5" />
+          <AlertTriangle className="w-3.5 h-3.5" />
           <span>Ação imediata necessária</span>
         </div>
       )}
@@ -188,7 +188,7 @@ export function ProcessesInApprovalCard() {
     <DomicileStatsCard
       title="Em Aprovação"
       value="15"
-      icon={<CheckCircle size={20} />}
+      icon={<CheckCircle2 size={20} />}
       status="normal"
     />
   );
